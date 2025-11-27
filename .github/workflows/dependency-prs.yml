@@ -1,0 +1,45 @@
+name: "Auto-PR: Update GlobalIntercom Dependencies"
+
+on:
+  push:
+    branches:
+    - deactivated-main
+  # release:
+  #   types: [published]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update-discord-connect:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Extract version
+        run: |
+          VERSION="${{ github.event.release.tag_name }}"
+          VERSION="${VERSION#v}"
+          echo "VERSION=${VERSION}" >> $GITHUB_ENV
+
+      - name: Checkout DiscordPlugin
+        uses: actions/checkout@v4
+        with:
+          repository: Devidian/rw-plugin-oz-discord-connect
+          path: discord
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Update GlobalIntercom dependency (@OZDiscordConnect)
+        run: |
+          cd discord
+          sed -i "s|\(<artifactId>rw-plugin-oz-global-intercom<\/artifactId>.*<version>\)[^<]*|\1${VERSION}|" pom.xml
+
+      - name: Commit & PR
+        uses: peter-evans/create-pull-request@v6
+        with:
+          path: discord
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "chore: update GlobalIntercom dependency to ${VERSION}"
+          title: "Update GlobalIntercom dependency to ${VERSION}"
+          body: "Automatically updated GlobalIntercom dependency to **${VERSION}**."
+          branch: update-globalintercom-${{ env.VERSION }}
