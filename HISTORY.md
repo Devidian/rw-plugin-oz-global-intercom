@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- ci: enabled pr workflow, fix permission for release (0.12.5)
+
 ## [0.12.4] - 2025-11-26 | Unity refactoring
 
 - refactor: updated for unity
