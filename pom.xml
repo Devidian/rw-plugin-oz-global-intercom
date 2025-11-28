@@ -44,6 +44,7 @@
 			<groupId>devidian</groupId>
 			<artifactId>rw-plugin-oz-tools</artifactId>
 			<version>0.9.0</version>
+            <scope>provided</scope>
 		</dependency>
 	</dependencies>
 	<build>
@@ -147,7 +148,43 @@
 				<version>3.3.1</version>
 				<executions>
 					<execution>
-						<id>copy-resource-one</id>
+						<id>copy-plugin</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${basedir}/dist/${project.name}</outputDirectory>
+							<resources>
+								<resource>
+									<directory>${basedir}/target</directory>
+									<includes>
+										<include>${project.build.finalName}.jar</include>
+									</includes>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+					<execution>
+						<id>copy-markdown</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${basedir}/dist/${project.name}</outputDirectory>
+							<resources>
+								<resource>
+									<directory>${basedir}</directory>
+									<includes>
+										<include>*.md</include>
+									</includes>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+					<execution>
+						<id>copy-settings</id>
 						<phase>prepare-package</phase>
 						<goals>
 							<goal>copy-resources</goal>
@@ -159,18 +196,6 @@
 									<directory>${basedir}/src</directory>
 									<includes>
 										<include>*.properties</include>
-									</includes>
-								</resource>
-								<resource>
-									<directory>${basedir}/target</directory>
-									<includes>
-										<include>${project.build.finalName}.jar</include>
-									</includes>
-								</resource>
-								<resource>
-									<directory>${basedir}</directory>
-									<includes>
-										<include>*.md</include>
 									</includes>
 								</resource>
 							</resources>
