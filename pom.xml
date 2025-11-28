@@ -48,7 +48,7 @@
 		</dependency>
 	</dependencies>
 	<build>
-		<sourceDirectory>src</sourceDirectory>
+		<!-- <sourceDirectory>src</sourceDirectory> -->
 		<directory>target</directory>
 		<finalName>${project.name}</finalName>
 
