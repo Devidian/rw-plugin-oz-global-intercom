@@ -5,7 +5,7 @@
 
 	<groupId>devidian</groupId>
 	<artifactId>rw-plugin-oz-global-intercom</artifactId>
-	<version>0.12.4</version>
+	<version>0.12.6</version>
 	<packaging>jar</packaging>
 	<name>OZGlobalIntercom</name>
 
@@ -43,7 +43,7 @@
 		<dependency>
 			<groupId>devidian</groupId>
 			<artifactId>rw-plugin-oz-tools</artifactId>
-			<version>0.9.0</version>
+			<version>0.9.3</version>
             <scope>provided</scope>
 		</dependency>
 	</dependencies>
@@ -149,7 +149,7 @@
 				<executions>
 					<execution>
 						<id>copy-plugin</id>
-						<phase>prepare-package</phase>
+						<phase>package</phase>
 						<goals>
 							<goal>copy-resources</goal>
 						</goals>

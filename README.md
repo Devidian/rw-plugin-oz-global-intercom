@@ -13,7 +13,7 @@ Should look like this:
         │    │    ├── i18n...
         │    │    ├── HISTORY.de.md
         │    │    ├── HISTORY.md
-        │    │    ├── OZ-GlobalIntercom.jar
+        │    │    ├── OZGlobalIntercom.jar
         │    │    ├── README.de.md
         │    │    ├── README.md
         │    │    └── settings.properties
@@ -26,6 +26,6 @@ Should look like this:
         │    │    │    :
         │    │    ├── HISTORY.md
         │    │    ├── README.md
-        │    │    └── OZ-Tools.jar
+        │    │    └── OZTools.jar
         :    :
 ```

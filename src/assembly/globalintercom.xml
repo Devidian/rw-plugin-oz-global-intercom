@@ -13,7 +13,7 @@
     <fileSets>
         <fileSet>
             <directory>${project.basedir}/dist/OZGlobalIntercom</directory>
-            <outputDirectory>/</outputDirectory>
+            <outputDirectory>/OZGlobalIntercom</outputDirectory>
         </fileSet>
     </fileSets>
 </assembly>
