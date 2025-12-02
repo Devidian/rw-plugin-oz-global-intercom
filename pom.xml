@@ -5,7 +5,7 @@
 
 	<groupId>devidian</groupId>
 	<artifactId>rw-plugin-oz-global-intercom</artifactId>
-	<version>0.12.6</version>
+	<version>0.12.7</version>
 	<packaging>jar</packaging>
 	<name>OZGlobalIntercom</name>
 
@@ -44,11 +44,11 @@
 			<groupId>devidian</groupId>
 			<artifactId>rw-plugin-oz-tools</artifactId>
 			<version>0.9.3</version>
-            <scope>provided</scope>
+			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 	<build>
-		<!-- <sourceDirectory>src</sourceDirectory> -->
+		<sourceDirectory>src</sourceDirectory>
 		<directory>target</directory>
 		<finalName>${project.name}</finalName>
 
@@ -99,20 +99,6 @@
 							<packaging>jar</packaging>
 						</configuration>
 					</execution>
-					<execution>
-						<id>install-local</id>
-						<phase>install</phase>
-						<goals>
-							<goal>install-file</goal>
-						</goals>
-						<configuration>
-							<file>${project.build.directory}/${project.build.finalName}.jar</file>
-							<groupId>${project.groupId}</groupId>
-							<artifactId>${project.build.finalName}</artifactId>
-							<version>${project.version}</version>
-							<packaging>jar</packaging>
-						</configuration>
-					</execution>
 				</executions>
 			</plugin>
 
@@ -144,27 +130,38 @@
 			</plugin>
 
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<version>3.6.0</version>
+
+				<executions>
+					<execution>
+						<id>copy-jar</id>
+						<phase>package</phase>
+						<goals>
+							<goal>copy</goal>
+						</goals>
+						<configuration>
+							<artifactItems>
+								<artifactItem>
+									<groupId>${project.groupId}</groupId>
+									<artifactId>${project.artifactId}</artifactId>
+									<version>${project.version}</version>
+									<type>jar</type>
+									<destFileName>${project.name}.jar</destFileName>
+									<outputDirectory>${basedir}/dist/${project.name}</outputDirectory>
+								</artifactItem>
+							</artifactItems>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-resources-plugin</artifactId>
 				<version>3.3.1</version>
 				<executions>
-					<execution>
-						<id>copy-plugin</id>
-						<phase>package</phase>
-						<goals>
-							<goal>copy-resources</goal>
-						</goals>
-						<configuration>
-							<outputDirectory>${basedir}/dist/${project.name}</outputDirectory>
-							<resources>
-								<resource>
-									<directory>${basedir}/target</directory>
-									<includes>
-										<include>${project.build.finalName}.jar</include>
-									</includes>
-								</resource>
-							</resources>
-						</configuration>
-					</execution>
 					<execution>
 						<id>copy-markdown</id>
 						<phase>prepare-package</phase>
@@ -202,7 +199,7 @@
 						</configuration>
 					</execution>
 					<execution>
-						<id>copy-resource-two</id>
+						<id>copy-i18n</id>
 						<phase>prepare-package</phase>
 						<goals>
 							<goal>copy-resources</goal>
@@ -239,7 +236,7 @@
 
 							<!-- Important: Inline descriptor -->
 							<descriptors>
-								<descriptor>src/assembly/globalintercom.xml</descriptor>
+								<descriptor>src/assembly/${project.artifactId}.xml</descriptor>
 							</descriptors>
 
 							<outputDirectory>${project.basedir}/dist</outputDirectory>

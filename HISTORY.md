@@ -2,9 +2,10 @@
 
 ## [Unreleased]
 
+- ci: enabled pr workflow, fix permission for release [0.12.5]
 - ci: fix jar copy phase [0.12.6]
 - ci: fix package zipping include Plugin Directory [0.12.6]
-- ci: enabled pr workflow, fix permission for release [0.12.5]
+- build: fix empty jar issue [0.12.6]
 - docs: fix README.md [0.12.6]
 
 ## [0.12.4] - 2025-11-26 | Unity refactoring
