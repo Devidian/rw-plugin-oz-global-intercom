@@ -40,7 +40,8 @@ jobs:
         with:
           java-version: "20"
           distribution: "temurin"
-          cache: maven
+          # cache: maven   # DISABLED, breaks GitHub Packages access
+
 
       - name: Install PluginAPI locally
         run: |
@@ -78,6 +79,7 @@ jobs:
       - name: Configure Maven settings.xml
         run: |
           mkdir -p ~/.m2
+
           cat > ~/.m2/settings.xml << 'EOF'
           <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
                     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -85,11 +87,14 @@ jobs:
                                         https://maven.apache.org/xsd/settings-1.0.0.xsd">
 
             <servers>
+              <!-- For consuming packages -->
               <server>
                 <id>github-oz-tools</id>
                 <username>${env.GITHUB_ACTOR}</username>
                 <password>${env.GITHUB_TOKEN}</password>
               </server>
+
+              <!-- For publishing + resolving rw-plugin-oz-tools -->
               <server>
                 <id>github</id>
                 <username>${env.GITHUB_ACTOR}</username>
@@ -145,6 +150,7 @@ jobs:
       - name: Configure Maven settings.xml
         run: |
           mkdir -p ~/.m2
+
           cat > ~/.m2/settings.xml << 'EOF'
           <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
                     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -152,11 +158,14 @@ jobs:
                                         https://maven.apache.org/xsd/settings-1.0.0.xsd">
 
             <servers>
+              <!-- For consuming packages -->
               <server>
                 <id>github-oz-tools</id>
                 <username>${env.GITHUB_ACTOR}</username>
                 <password>${env.GITHUB_TOKEN}</password>
               </server>
+
+              <!-- For publishing + resolving rw-plugin-oz-tools -->
               <server>
                 <id>github</id>
                 <username>${env.GITHUB_ACTOR}</username>
