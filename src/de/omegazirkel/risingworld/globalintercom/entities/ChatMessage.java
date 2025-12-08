@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package de.omegazirkel.risingworld;
+package de.omegazirkel.risingworld.globalintercom.entities;
 
 import java.util.Date;
 import net.risingworld.api.Server;
@@ -29,7 +29,7 @@ public class ChatMessage {
 	public String sourceVersion;
 	public String attachment;		// base64 encoded attachment
 
-	ChatMessage(Player player, String msg, String ch) {
+	public ChatMessage(Player player, String msg, String ch) {
 		this.createdOn = new Date();
 		// Message stuff
 		this.chatVersion = version;

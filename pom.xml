@@ -5,7 +5,7 @@
 
 	<groupId>com.github.devidian</groupId>
 	<artifactId>rw-plugin-oz-global-intercom</artifactId>
-	<version>0.12.7</version>
+	<version>0.13.0</version>
 	<packaging>jar</packaging>
 	<name>OZGlobalIntercom</name>
 
@@ -43,7 +43,7 @@
 		<dependency>
 			<groupId>com.github.devidian</groupId>
 			<artifactId>rw-plugin-oz-tools</artifactId>
-			<version>0.9.4</version>
+			<version>0.10.0</version>
 		</dependency>
 	</dependencies>
 	<build>
@@ -56,7 +56,13 @@
 				<targetPath>resources</targetPath>
 				<directory>${basedir}/src/resources</directory>
 				<includes>
-					<include>*.yml</include>
+					<include>**/*</include>
+				</includes>
+			</resource>
+			<resource>
+				<directory>${basedir}/src/main/resources</directory>
+				<includes>
+					<include>**/*</include>
 				</includes>
 			</resource>
 		</resources>

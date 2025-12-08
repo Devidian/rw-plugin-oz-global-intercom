@@ -1,4 +1,4 @@
-package de.omegazirkel.risingworld;
+package de.omegazirkel.risingworld.globalintercom;
 
 import java.lang.reflect.Type;
 
@@ -6,6 +6,11 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
+import de.omegazirkel.risingworld.GlobalIntercom;
+import de.omegazirkel.risingworld.globalintercom.entities.ChatMessage;
+import de.omegazirkel.risingworld.globalintercom.entities.GlobalIntercomPlayer;
+import de.omegazirkel.risingworld.globalintercom.entities.PlayerJoinChannelMessage;
+import de.omegazirkel.risingworld.globalintercom.entities.WSMessage;
 import de.omegazirkel.risingworld.tools.Colors;
 import de.omegazirkel.risingworld.tools.I18n;
 import de.omegazirkel.risingworld.tools.OZLogger;
@@ -17,15 +22,16 @@ public class WebSocketHandler implements de.omegazirkel.risingworld.tools.WebSoc
     GlobalIntercom plugin = null;
     static WSClientEndpoint wsc;
 	static final Colors c = Colors.getInstance();
-	private static I18n t = null;
+    static final PluginSettings s = PluginSettings.getInstance();
+	private static I18n t = I18n.getInstance();
+
 
     public static OZLogger logger() {
         return OZLogger.getInstance("OZ.GlobalIntercom.WSC");
     }
 
-    public WebSocketHandler(GlobalIntercom plugin, I18n i18n) {
+    public WebSocketHandler(GlobalIntercom plugin) {
         this.plugin = plugin;
-        t = i18n;
     }
 
     @Override
@@ -68,9 +74,9 @@ public class WebSocketHandler implements de.omegazirkel.risingworld.tools.WebSoc
             // t.get("MSG_UNREGISTERED", lang));
             // }
             else if (wsm.event.contentEquals("playerOnline")) {
-                if (!giPlayer.saveSettings && GlobalIntercom.joinDefault && !giPlayer.isInChannel(GlobalIntercom.defaultChannel)) {
+                if (!giPlayer.saveSettings && s.joinDefault && !giPlayer.isInChannel(s.defaultChannel)) {
                     PlayerJoinChannelMessage msg = new PlayerJoinChannelMessage(player);
-                    msg.channel = GlobalIntercom.defaultChannel;
+                    msg.channel = s.defaultChannel;
                     transmitMessageWS(player, new WSMessage<>("playerJoinChannel", msg));
                     // event.getPlayer().setAttribute("gi." + defaultChannel, true);
                     // String lang = event.getPlayer().getSystemLanguage();

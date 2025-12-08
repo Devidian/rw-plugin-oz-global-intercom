@@ -1,4 +1,4 @@
-package de.omegazirkel.risingworld;
+package de.omegazirkel.risingworld.globalintercom.entities;
 
 import java.util.List;
 
@@ -10,7 +10,7 @@ public class PlayerData {
 	public String playerUID;// should be long but JavaScript cant handle this (yet)
 	public List<String> channelList;
 
-	PlayerData(Player player) {
+	public PlayerData(Player player) {
 		// Player stuff
 		this.playerName = player.getName();
 		this.playerUID = "" + player.getUID();

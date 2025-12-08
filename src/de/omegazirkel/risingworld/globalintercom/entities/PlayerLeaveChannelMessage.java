@@ -1,11 +1,11 @@
-package de.omegazirkel.risingworld;
+package de.omegazirkel.risingworld.globalintercom.entities;
 
 import net.risingworld.api.objects.Player;
 
 public class PlayerLeaveChannelMessage extends PlayerMessage {
     public String channel;
 
-    PlayerLeaveChannelMessage(Player player) {
+    public PlayerLeaveChannelMessage(Player player) {
         super(player);
     }
 }

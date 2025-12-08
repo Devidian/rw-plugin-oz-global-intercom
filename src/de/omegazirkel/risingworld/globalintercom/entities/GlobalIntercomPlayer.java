@@ -1,4 +1,4 @@
-package de.omegazirkel.risingworld;
+package de.omegazirkel.risingworld.globalintercom.entities;
 
 import java.util.ArrayList;
 

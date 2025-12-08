@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+## [0.13.0] - 2025-12-08 | CI Workflow, settings refactoring
+
+- refactor,BREAKING: updated OZTools to `0.10.0`, which includes breaking changes (I18n)
 - ci: enabled pr workflow, fix permission for release [0.12.5]
 - ci: fix jar copy phase [0.12.6]
 - ci: fix package zipping include Plugin Directory [0.12.6]

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package de.omegazirkel.risingworld;
+package de.omegazirkel.risingworld.globalintercom.entities;
 
 /**
  *
@@ -20,7 +20,7 @@ public class WSMessage<T> {
 	public final String successCode = null;
 	public final String errorCode = null;
 
-	WSMessage(String event, T payload) {
+	public WSMessage(String event, T payload) {
 		this.payload = payload;
 		this.event = event;
 	}

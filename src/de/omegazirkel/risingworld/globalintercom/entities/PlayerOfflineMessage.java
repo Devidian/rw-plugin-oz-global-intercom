@@ -1,10 +1,10 @@
-package de.omegazirkel.risingworld;
+package de.omegazirkel.risingworld.globalintercom.entities;
 
 import net.risingworld.api.objects.Player;
 
 public class PlayerOfflineMessage extends PlayerMessage {
 
-    PlayerOfflineMessage(Player player) {
+    public PlayerOfflineMessage(Player player) {
         super(player);
     }
 }

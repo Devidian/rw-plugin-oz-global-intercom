@@ -8,19 +8,27 @@ package de.omegazirkel.risingworld;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 
 import javax.imageio.ImageIO;
 
+import de.omegazirkel.risingworld.globalintercom.PluginSettings;
+import de.omegazirkel.risingworld.globalintercom.WebSocketHandler;
+import de.omegazirkel.risingworld.globalintercom.entities.ChatMessage;
+import de.omegazirkel.risingworld.globalintercom.entities.GlobalIntercomPlayer;
+import de.omegazirkel.risingworld.globalintercom.entities.PlayerCloseChannelMessage;
+import de.omegazirkel.risingworld.globalintercom.entities.PlayerCreateChannelMessage;
+import de.omegazirkel.risingworld.globalintercom.entities.PlayerJoinChannelMessage;
+import de.omegazirkel.risingworld.globalintercom.entities.PlayerLeaveChannelMessage;
+import de.omegazirkel.risingworld.globalintercom.entities.PlayerOfflineMessage;
+import de.omegazirkel.risingworld.globalintercom.entities.PlayerOnlineMessage;
+import de.omegazirkel.risingworld.globalintercom.entities.PlayerOverrideChangeMessage;
+import de.omegazirkel.risingworld.globalintercom.entities.PlayerRegisterMessage;
+import de.omegazirkel.risingworld.globalintercom.entities.PlayerUnregisterMessage;
+import de.omegazirkel.risingworld.globalintercom.entities.WSMessage;
 import de.omegazirkel.risingworld.tools.Colors;
 import de.omegazirkel.risingworld.tools.FileChangeListener;
 import de.omegazirkel.risingworld.tools.I18n;
@@ -42,30 +50,15 @@ import net.risingworld.api.objects.Player;
  * @author Maik Laschober
  */
 public class GlobalIntercom extends Plugin implements Listener, FileChangeListener {
-	static final String pluginCMD = "gi";
+	public static final String pluginCMD = "gi";
 
 	public static OZLogger logger() {
 		return OZLogger.getInstance("OZ.GlobalIntercom");
 	}
 
-	static final Colors c = Colors.getInstance();
+	private static final Colors c = Colors.getInstance();
 	private static I18n t = null;
-
-	// Settings
-	// static int logLevel = 0;
-	static boolean restartOnUpdate = true;
-	static boolean sendPluginWelcome = false;
-	static boolean joinDefault = false;
-	static URI webSocketURI;
-	static String defaultChannel = "global";
-
-	static String colorOther = "<color=#3881f7>";
-	static String colorSelf = "<color=#37f7da>";
-	static String colorLocal = "<color=#FFFFFF>";
-
-	static boolean allowScreenshots = true;
-	static int maxScreenWidth = 1920;
-	// END Settings
+	private static PluginSettings s = null;
 
 	static boolean flagRestart = false;
 
@@ -73,17 +66,18 @@ public class GlobalIntercom extends Plugin implements Listener, FileChangeListen
 	static WSClientEndpoint wsc;
 	static WebSocketHandler wsh;
 
-	static final Map<String, GlobalIntercomPlayer> playerMap = new HashMap<String, GlobalIntercomPlayer>();
+	public static final Map<String, GlobalIntercomPlayer> playerMap = new HashMap<String, GlobalIntercomPlayer>();
 
 	@Override
 	public void onEnable() {
-		t = t != null ? t : new I18n(this);
+		s = PluginSettings.getInstance(this);
+		t = t != null ? t : I18n.getInstance(this);
 		registerEventListener(this);
 
-		this.initSettings();
+		s.initSettings();
 
-		wsh = new WebSocketHandler(this, t);
-		wsc = WSClientEndpoint.getInstance(webSocketURI, wsh);
+		wsh = new WebSocketHandler(this);
+		wsc = WSClientEndpoint.getInstance(s.webSocketURI, wsh);
 
 		logger().info("✅ " + this.getName() + " Plugin is enabled version:" + this.getDescription("version"));
 	}
@@ -187,7 +181,7 @@ public class GlobalIntercom extends Plugin implements Listener, FileChangeListen
 					if (cmd.length > 2) {
 						msg.channel = cmd[2].toLowerCase();
 					} else {
-						msg.channel = defaultChannel;
+						msg.channel = s.defaultChannel;
 					}
 					if (cmd.length > 3) {
 						msg.password = cmd[3];
@@ -202,7 +196,7 @@ public class GlobalIntercom extends Plugin implements Listener, FileChangeListen
 					if (cmd.length > 2) {
 						msg.channel = cmd[2].toLowerCase();
 					} else {
-						msg.channel = defaultChannel;
+						msg.channel = s.defaultChannel;
 					}
 					WSMessage<PlayerLeaveChannelMessage> wsmsg = new WSMessage<>("playerLeaveChannel", msg);
 					wsh.transmitMessageWS(player, wsmsg);
@@ -261,8 +255,8 @@ public class GlobalIntercom extends Plugin implements Listener, FileChangeListen
 					String statusMessage = t.get("CMD_STATUS", lang)
 							.replace("PH_VERSION", c.okay + this.getDescription("version") + c.text)
 							.replace("PH_LANGUAGE",
-									colorSelf + player.getLanguage() + " / " + player.getSystemLanguage() + c.text)
-							.replace("PH_USEDLANG", colorOther + t.getLanguageUsed(lang) + c.text)
+									s.colorSelf + player.getLanguage() + " / " + player.getSystemLanguage() + c.text)
+							.replace("PH_USEDLANG", s.colorOther + t.getLanguageUsed(lang) + c.text)
 							.replace("PH_LANG_AVAILABLE", c.okay + t.getLanguageAvailable() + c.text)
 							.replace("PH_STATE_WS", wsStatus + c.text)
 							.replace("PH_STATE_CH", c.command + lastCH + c.text)
@@ -342,7 +336,7 @@ public class GlobalIntercom extends Plugin implements Listener, FileChangeListen
 			// reset to local chat
 			player.deleteAttribute("gilastch");
 			if (noColorText.substring(2).length() > 0) {
-				event.setChatMessage(colorLocal + noColorText.substring(2));
+				event.setChatMessage(s.colorLocal + noColorText.substring(2));
 			} else {
 				player.sendTextMessage(
 						c.okay + this.getName() + ":>" + c.text + t.get("MSG_INFO_CH_DEFAULT_RESET", lang));
@@ -360,7 +354,7 @@ public class GlobalIntercom extends Plugin implements Listener, FileChangeListen
 					chatMessage = "";
 				}
 			} else {
-				channel = defaultChannel;
+				channel = s.defaultChannel;
 				chatMessage = noColorText.substring(1);
 			}
 			if (channel.length() > 20) {
@@ -391,14 +385,14 @@ public class GlobalIntercom extends Plugin implements Listener, FileChangeListen
 			channel = (String) player.getAttribute("gilastch");
 			chatMessage = noColorText;
 		} else {
-			event.setChatMessage(colorLocal + noColorText);
+			event.setChatMessage(s.colorLocal + noColorText);
 			return; // no Global Intercom Chat message
 		}
 
 		if (giPlayer == null || !giPlayer.isInChannel(channel)) {
 			// The player is not in that channel, return to local
 			player.deleteAttribute("gilastch");
-			event.setChatMessage(colorLocal + noColorText);
+			event.setChatMessage(s.colorLocal + noColorText);
 			return; // no Global Intercom Chat message
 		}
 
@@ -406,11 +400,11 @@ public class GlobalIntercom extends Plugin implements Listener, FileChangeListen
 		ChatMessage cmsg = new ChatMessage(player, chatMessage, channel);
 
 		if (chatMessage.contains("+screen")) {
-			if (allowScreenshots == true) {
+			if (s.allowScreenshots == true) {
 				int playerResolutionX = player.getScreenResolutionX();
 				float sizeFactor = 1.0f;
-				if (playerResolutionX > maxScreenWidth) {
-					sizeFactor = maxScreenWidth * 1f / playerResolutionX * 1f;
+				if (playerResolutionX > s.maxScreenWidth) {
+					sizeFactor = s.maxScreenWidth * 1f / playerResolutionX * 1f;
 				}
 
 				player.createScreenshot(sizeFactor, 1, !chatMessage.contains("+screennogui"), (BufferedImage bimg) -> {
@@ -446,7 +440,7 @@ public class GlobalIntercom extends Plugin implements Listener, FileChangeListen
 	@EventMethod
 	public void onPlayerSpawn(PlayerSpawnEvent event) {
 		Player player = event.getPlayer();
-		if (sendPluginWelcome) {
+		if (s.sendPluginWelcome) {
 			String lang = player.getSystemLanguage();
 			player.sendTextMessage(t.get("MSG_PLUGIN_WELCOME", lang));
 		}
@@ -470,43 +464,6 @@ public class GlobalIntercom extends Plugin implements Listener, FileChangeListen
 
 	/**
 	 *
-	 */
-	private void initSettings() {
-		Properties settings = new Properties();
-		FileInputStream in;
-		try {
-			in = new FileInputStream(getPath() + "/settings.properties");
-			settings.load(new InputStreamReader(in, "UTF8"));
-			in.close();
-			// fill global values
-			// logLevel = Integer.parseInt(settings.getProperty("logLevel", "1"));
-			webSocketURI = new URI(settings.getProperty("webSocketURI", "wss://rw.gi.omega-zirkel.de/ws"));
-			defaultChannel = settings.getProperty("defaultChannel", "global");
-			joinDefault = settings.getProperty("joinDefault", "true").contentEquals("true");
-			colorOther = settings.getProperty("colorOther", "<color=#3881f7>");
-			colorSelf = settings.getProperty("colorSelf", "<color=#37f7da>");
-			colorLocal = settings.getProperty("colorLocal", "<color=#FFFFFF>");
-
-			sendPluginWelcome = settings.getProperty("sendPluginWelcome", "true").contentEquals("true");
-
-			allowScreenshots = settings.getProperty("allowScreenshots", "true").contentEquals("true");
-			maxScreenWidth = Integer.parseInt(settings.getProperty("maxScreenWidth", "1920"));
-
-			// restart settings
-			restartOnUpdate = settings.getProperty("restartOnUpdate", "false").contentEquals("true");
-			logger().info(this.getName() + " Plugin settings loaded");
-		} catch (IOException ex) {
-			logger().fatal("IOException@initSettings: " + ex.getMessage());
-			// e.printStackTrace();
-		} catch (NumberFormatException ex) {
-			logger().fatal("NumberFormatException@initSettings: " + ex.getMessage());
-		} catch (URISyntaxException ex) {
-			logger().fatal("Exception@initSettings: " + ex.getMessage());
-		}
-	}
-
-	/**
-	 *
 	 * @version 0.8.1
 	 * @param cmsg
 	 */
@@ -518,9 +475,9 @@ public class GlobalIntercom extends Plugin implements Listener, FileChangeListen
 			}
 			GlobalIntercomPlayer giPlayer = playerMap.get(player.getUID() + "");
 			if (giPlayer != null && giPlayer.isInChannel(cmsg.chatChannel)) {
-				String color = colorOther;
+				String color = s.colorOther;
 				if ((player.getUID() + "").contentEquals(cmsg.playerUID)) {
-					color = colorSelf;
+					color = s.colorSelf;
 				}
 				player.sendTextMessage(color + "[" + cmsg.chatChannel.toUpperCase() + "] " + cmsg.playerName + ": "
 						+ c.text + cmsg.chatContent);
@@ -562,7 +519,7 @@ public class GlobalIntercom extends Plugin implements Listener, FileChangeListen
 
 	@Override
 	public void onSettingsChanged(Path file) {
-		this.initSettings();
+		s.initSettings();
 		// updated settings msg to all
 		for (Player player : Server.getAllPlayers()) {
 			player.sendTextMessage(c.okay + this.getName() + ":> " + c.endTag
