@@ -19,7 +19,7 @@ public class PluginSettings {
 	private static GlobalIntercom plugin;
 
 	private static OZLogger logger() {
-		return OZLogger.getInstance("OZ.GlobalIntercom.Settings");
+		return GlobalIntercom.logger();
 	}
 
 	// Settings

@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+- docs: standardize agent prompts, PR checklist, and runtime smoke-test guidance
+- build: add API verification helper and stricter CI/release validation flow
+- build: package only `README.md` and `HISTORY.md` into release artifacts
+
 ## [0.13.0] - 2025-12-08 | CI Workflow, settings refactoring
 
 - refactor,BREAKING: updated OZTools to `0.10.0`, which includes breaking changes (I18n)

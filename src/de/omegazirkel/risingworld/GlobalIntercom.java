@@ -59,6 +59,7 @@ public class GlobalIntercom extends Plugin implements Listener, FileChangeListen
 	private static final Colors c = Colors.getInstance();
 	private static I18n t = null;
 	private static PluginSettings s = null;
+	public static String name;
 
 	static boolean flagRestart = false;
 
@@ -70,6 +71,7 @@ public class GlobalIntercom extends Plugin implements Listener, FileChangeListen
 
 	@Override
 	public void onEnable() {
+		name=this.getDescription("name");
 		s = PluginSettings.getInstance(this);
 		t = t != null ? t : I18n.getInstance(this);
 		registerEventListener(this);
@@ -525,6 +527,7 @@ public class GlobalIntercom extends Plugin implements Listener, FileChangeListen
 			player.sendTextMessage(c.okay + this.getName() + ":> " + c.endTag
 					+ t.get("MSG_SETTINGS_UPDATED", player.getSystemLanguage()));
 		}
+		logger().setLevel(s.logLevel);
 	}
 
 }

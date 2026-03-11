@@ -43,7 +43,7 @@
 		<dependency>
 			<groupId>com.github.devidian</groupId>
 			<artifactId>rw-plugin-oz-tools</artifactId>
-			<version>0.10.0</version>
+			<version>0.11.0</version>
 		</dependency>
 	</dependencies>
 	<build>
@@ -179,7 +179,8 @@
 								<resource>
 									<directory>${basedir}</directory>
 									<includes>
-										<include>*.md</include>
+										<include>README.md</include>
+										<include>HISTORY.md</include>
 									</includes>
 								</resource>
 							</resources>
