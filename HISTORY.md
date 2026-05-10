@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- build: align bundled PluginAPI jar and Maven dependency version
 - docs: standardize agent prompts, PR checklist, and runtime smoke-test guidance
 - build: add API verification helper and stricter CI/release validation flow
 - build: package only `README.md` and `HISTORY.md` into release artifacts
