@@ -34,6 +34,8 @@ import de.omegazirkel.risingworld.tools.FileChangeListener;
 import de.omegazirkel.risingworld.tools.I18n;
 import de.omegazirkel.risingworld.tools.OZLogger;
 import de.omegazirkel.risingworld.tools.WSClientEndpoint;
+import de.omegazirkel.risingworld.tools.settings.PlayerPluginAdminSettings;
+import de.omegazirkel.risingworld.tools.ui.PlayerPluginSettingsOverlay;
 import net.risingworld.api.Plugin;
 import net.risingworld.api.Server;
 import net.risingworld.api.events.EventMethod;
@@ -80,6 +82,9 @@ public class GlobalIntercom extends Plugin implements Listener, FileChangeListen
 
 		wsh = new WebSocketHandler(this);
 		wsc = WSClientEndpoint.getInstance(s.webSocketURI, wsh);
+		PlayerPluginSettingsOverlay.registerPlayerPluginAdminSettings(
+				new PlayerPluginAdminSettings(name, getDescription("version"), () -> s.adminSettingsEntries(),
+						s::initSettings));
 
 		logger().info("✅ " + this.getName() + " Plugin is enabled version:" + this.getDescription("version"));
 	}
@@ -444,7 +449,10 @@ public class GlobalIntercom extends Plugin implements Listener, FileChangeListen
 		Player player = event.getPlayer();
 		if (s.sendPluginWelcome) {
 			String lang = player.getSystemLanguage();
-			player.sendTextMessage(t.get("MSG_PLUGIN_WELCOME", lang));
+			player.sendTextMessage(t.get("MSG_PLUGIN_WELCOME", lang)
+					.replace("PH_PLUGIN_NAME", getDescription("name"))
+					.replace("PH_PLUGIN_CMD", pluginCMD)
+					.replace("PH_PLUGIN_VERSION", getDescription("version")));
 		}
 
 		if (Server.getType() == Server.Type.Singleplayer) {

@@ -12,6 +12,9 @@ import java.util.Properties;
 
 import de.omegazirkel.risingworld.GlobalIntercom;
 import de.omegazirkel.risingworld.tools.OZLogger;
+import de.omegazirkel.risingworld.tools.settings.AdminSettingsEntry;
+import de.omegazirkel.risingworld.tools.settings.AdminSettingsType;
+import de.omegazirkel.risingworld.tools.settings.SettingsFileEditor;
 
 public class PluginSettings {
 	private static PluginSettings instance = null;
@@ -24,6 +27,7 @@ public class PluginSettings {
 
 	// Settings
 	public String logLevel = "ALL";
+	public boolean reloadOnChange = true;
 	public boolean sendPluginWelcome = false;
 	public boolean restartOnUpdate = true;
 	public boolean joinDefault = false;
@@ -79,6 +83,7 @@ public class PluginSettings {
 			}
 			// fill global values
 			logLevel = settings.getProperty("logLevel", "ALL");
+			reloadOnChange = settings.getProperty("reloadOnChange", "true").contentEquals("true");
 
 			// motd settings
 			sendPluginWelcome = settings.getProperty("sendPluginWelcome", "false").contentEquals("true");
@@ -109,5 +114,42 @@ public class PluginSettings {
 			logger().error("URISyntaxException on initSettings: " + ex.getMessage());
 			ex.printStackTrace();
 		}
+	}
+
+	public java.util.List<AdminSettingsEntry> adminSettingsEntries() {
+		return java.util.List.of(
+				entry("logLevel", "Log level", "Controls GlobalIntercom logging verbosity.", logLevel, "ALL",
+						AdminSettingsType.STRING),
+				entry("reloadOnChange", "Reload on change",
+						"Documents that GlobalIntercom settings reload when settings.properties changes.",
+						reloadOnChange, "true", AdminSettingsType.BOOLEAN),
+				entry("sendPluginWelcome", "Welcome message",
+						"Shows a short GlobalIntercom message when a player joins.", sendPluginWelcome, "false",
+						AdminSettingsType.BOOLEAN),
+				entry("joinDefault", "Join default channel", "Automatically joins players to the default channel.",
+						joinDefault, "false", AdminSettingsType.BOOLEAN),
+				entry("defaultChannel", "Default channel", "Default global intercom channel.", defaultChannel, "global",
+						AdminSettingsType.STRING),
+				entry("allowScreenshots", "Allow screenshots", "Allows screenshot posting from chat commands.",
+						allowScreenshots, "true", AdminSettingsType.BOOLEAN),
+				entry("maxScreenWidth", "Max screenshot width", "Maximum screenshot width in pixels.", maxScreenWidth,
+						"1280", AdminSettingsType.INTEGER));
+	}
+
+	private AdminSettingsEntry entry(String key, String label, String description, Object value, String defaultValue,
+			AdminSettingsType type) {
+		return new AdminSettingsEntry(
+				key,
+				label,
+				description,
+				String.valueOf(value),
+				defaultValue,
+				type,
+				false,
+				newValue -> SettingsFileEditor.writeValue(settingsPath(), key, newValue));
+	}
+
+	private Path settingsPath() {
+		return Paths.get((plugin.getPath() != null ? plugin.getPath() : ".") + "/settings.properties");
 	}
 }

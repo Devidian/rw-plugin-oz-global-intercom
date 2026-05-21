@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+- fix: restore colored one-line plugin welcome message
 - build: align bundled PluginAPI jar and Maven dependency version
 - docs: standardize agent prompts, PR checklist, and runtime smoke-test guidance
 - build: add API verification helper and stricter CI/release validation flow
