@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+- feat: add shared Tools Info/Status provider for Global Intercom and route `/gi info` plus `/gi status` to it
+- feat: expose grouped admin PluginSettings metadata for all safe Global Intercom settings
+- docs: document the current WebSocket relay contract for `rw-girs` compatibility work
 - fix: restore colored one-line plugin welcome message
 - build: align bundled PluginAPI jar and Maven dependency version
 - docs: standardize agent prompts, PR checklist, and runtime smoke-test guidance

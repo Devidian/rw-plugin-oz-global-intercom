@@ -8,6 +8,8 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Properties;
 
 import de.omegazirkel.risingworld.GlobalIntercom;
@@ -40,6 +42,9 @@ public class PluginSettings {
 
 	public boolean allowScreenshots = true;
 	public int maxScreenWidth = 1920;
+	private Path settingsFile;
+	private Properties currentSettings = new Properties();
+	private Properties defaultSettings = new Properties();
 	// end Settings
 
 	public static PluginSettings getInstance(GlobalIntercom p) {
@@ -63,7 +68,7 @@ public class PluginSettings {
 	}
 
 	public void initSettings(String filePath) {
-		Path settingsFile = Paths.get(filePath);
+		settingsFile = Paths.get(filePath);
 		Path defaultSettingsFile = settingsFile.resolveSibling("settings.default.properties");
 
 		try {
@@ -73,6 +78,12 @@ public class PluginSettings {
 			}
 
 			Properties settings = new Properties();
+			Properties defaults = new Properties();
+			if (Files.exists(defaultSettingsFile)) {
+				try (FileInputStream in = new FileInputStream(defaultSettingsFile.toFile())) {
+					defaults.load(new InputStreamReader(in, "UTF8"));
+				}
+			}
 			if (Files.exists(settingsFile)) {
 				try (FileInputStream in = new FileInputStream(settingsFile.toFile())) {
 					settings.load(new InputStreamReader(in, "UTF8"));
@@ -83,19 +94,20 @@ public class PluginSettings {
 			}
 			// fill global values
 			logLevel = settings.getProperty("logLevel", "ALL");
-			reloadOnChange = settings.getProperty("reloadOnChange", "true").contentEquals("true");
+			reloadOnChange = bool(settings, "reloadOnChange", true);
+			restartOnUpdate = bool(settings, "restartOnUpdate", true);
 
 			// motd settings
-			sendPluginWelcome = settings.getProperty("sendPluginWelcome", "false").contentEquals("true");
+			sendPluginWelcome = bool(settings, "sendPluginWelcome", false);
 
 			webSocketURI = new URI(settings.getProperty("webSocketURI", "wss://rw.gi.omega-zirkel.de/ws"));
 			defaultChannel = settings.getProperty("defaultChannel", "global");
-			joinDefault = settings.getProperty("joinDefault", "true").contentEquals("true");
+			joinDefault = bool(settings, "joinDefault", true);
 			colorOther = settings.getProperty("colorOther", "<color=#3881f7>");
 			colorSelf = settings.getProperty("colorSelf", "<color=#37f7da>");
 			colorLocal = settings.getProperty("colorLocal", "<color=#FFFFFF>");
 
-			allowScreenshots = settings.getProperty("allowScreenshots", "true").contentEquals("true");
+			allowScreenshots = bool(settings, "allowScreenshots", true);
 			maxScreenWidth = Integer.parseInt(settings.getProperty("maxScreenWidth", "1920"));
 
 			logger().info(plugin.getName() + " Plugin settings loaded");
@@ -103,6 +115,8 @@ public class PluginSettings {
 			logger().info("Sending welcome message on login is: " + String.valueOf(sendPluginWelcome));
 			logger().info("Loglevel is set to " + logLevel);
 			logger().setLevel(logLevel);
+			currentSettings = settings;
+			defaultSettings = defaults;
 
 		} catch (IOException ex) {
 			logger().error("IOException on initSettings: " + ex.getMessage());
@@ -116,40 +130,63 @@ public class PluginSettings {
 		}
 	}
 
-	public java.util.List<AdminSettingsEntry> adminSettingsEntries() {
-		return java.util.List.of(
-				entry("logLevel", "Log level", "Controls GlobalIntercom logging verbosity.", logLevel, "ALL",
-						AdminSettingsType.STRING),
+	public List<AdminSettingsEntry> adminSettingsEntries() {
+		return Arrays.asList(
+				AdminSettingsEntry.group("logging", "Logging", "Logging output and verbosity."),
+				entry("logLevel", "Log level", "Controls GlobalIntercom logging verbosity.", AdminSettingsType.STRING),
+				AdminSettingsEntry.group("runtime", "Runtime", "Runtime reload and maintenance behavior."),
 				entry("reloadOnChange", "Reload on change",
 						"Documents that GlobalIntercom settings reload when settings.properties changes.",
-						reloadOnChange, "true", AdminSettingsType.BOOLEAN),
-				entry("sendPluginWelcome", "Welcome message",
-						"Shows a short GlobalIntercom message when a player joins.", sendPluginWelcome, "false",
 						AdminSettingsType.BOOLEAN),
-				entry("joinDefault", "Join default channel", "Automatically joins players to the default channel.",
-						joinDefault, "false", AdminSettingsType.BOOLEAN),
-				entry("defaultChannel", "Default channel", "Default global intercom channel.", defaultChannel, "global",
+				entry("restartOnUpdate", "Restart on update",
+						"Documents that GlobalIntercom should restart after plugin updates.",
+						AdminSettingsType.BOOLEAN),
+				AdminSettingsEntry.group("relay", "Relay", "WebSocket relay connection and default channel behavior."),
+				entry("webSocketURI", "WebSocket URI", "Relay server WebSocket endpoint.", AdminSettingsType.STRING),
+				entry("defaultChannel", "Default channel", "Default global intercom channel.",
 						AdminSettingsType.STRING),
+				entry("joinDefault", "Join default channel", "Automatically joins players to the default channel.",
+						AdminSettingsType.BOOLEAN),
+				AdminSettingsEntry.group("chatColors", "Chat colors", "RichText colors used for chat output."),
+				entry("colorOther", "Other-player color", "Color for messages from other players.",
+						AdminSettingsType.STRING),
+				entry("colorSelf", "Own-message color", "Color for messages from the receiving player.",
+						AdminSettingsType.STRING),
+				entry("colorLocal", "Local-chat color", "Color applied to local chat messages.",
+						AdminSettingsType.STRING),
+				AdminSettingsEntry.group("playerMessages", "Player messages", "Messages sent directly to players."),
+				entry("sendPluginWelcome", "Welcome message",
+						"Shows a short GlobalIntercom message when a player joins.", AdminSettingsType.BOOLEAN),
+				AdminSettingsEntry.group("screenshots", "Screenshots", "Screenshot attachment options for relayed chat."),
 				entry("allowScreenshots", "Allow screenshots", "Allows screenshot posting from chat commands.",
-						allowScreenshots, "true", AdminSettingsType.BOOLEAN),
+						AdminSettingsType.BOOLEAN),
 				entry("maxScreenWidth", "Max screenshot width", "Maximum screenshot width in pixels.", maxScreenWidth,
-						"1280", AdminSettingsType.INTEGER));
+						AdminSettingsType.INTEGER));
 	}
 
-	private AdminSettingsEntry entry(String key, String label, String description, Object value, String defaultValue,
-			AdminSettingsType type) {
+	private AdminSettingsEntry entry(String key, String label, String description, AdminSettingsType type) {
+		return entry(key, label, description, currentSettings.getProperty(key, defaultSettings.getProperty(key, "")),
+				type);
+	}
+
+	private AdminSettingsEntry entry(String key, String label, String description, Object value, AdminSettingsType type) {
 		return new AdminSettingsEntry(
 				key,
 				label,
 				description,
 				String.valueOf(value),
-				defaultValue,
+				defaultSettings.getProperty(key, ""),
 				type,
 				false,
 				newValue -> SettingsFileEditor.writeValue(settingsPath(), key, newValue));
 	}
 
 	private Path settingsPath() {
-		return Paths.get((plugin.getPath() != null ? plugin.getPath() : ".") + "/settings.properties");
+		return settingsFile != null ? settingsFile
+				: Paths.get((plugin.getPath() != null ? plugin.getPath() : ".") + "/settings.properties");
+	}
+
+	private boolean bool(Properties settings, String key, boolean fallback) {
+		return settings.getProperty(key, String.valueOf(fallback)).contentEquals("true");
 	}
 }

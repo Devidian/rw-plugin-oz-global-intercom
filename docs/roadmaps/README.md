@@ -4,6 +4,7 @@ Large implementation plans and long-lived roadmap documents live here.
 
 ## Current Roadmaps
 
+- [Roadmap Plan 02 Modernization And Relay](roadmap-plan-02-modernization-and-relay.md)
 - [Roadmap Plan 01 Compatibility](roadmap-plan-01-compatibility.md)
 
 ## Template

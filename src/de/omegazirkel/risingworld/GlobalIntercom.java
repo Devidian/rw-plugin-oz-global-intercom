@@ -34,8 +34,10 @@ import de.omegazirkel.risingworld.tools.FileChangeListener;
 import de.omegazirkel.risingworld.tools.I18n;
 import de.omegazirkel.risingworld.tools.OZLogger;
 import de.omegazirkel.risingworld.tools.WSClientEndpoint;
+import de.omegazirkel.risingworld.tools.ui.PluginInfoStatusProviders;
 import de.omegazirkel.risingworld.tools.settings.PlayerPluginAdminSettings;
 import de.omegazirkel.risingworld.tools.ui.PlayerPluginSettingsOverlay;
+import de.omegazirkel.risingworld.globalintercom.GlobalIntercomPluginInfoStatusProvider;
 import net.risingworld.api.Plugin;
 import net.risingworld.api.Server;
 import net.risingworld.api.events.EventMethod;
@@ -73,7 +75,7 @@ public class GlobalIntercom extends Plugin implements Listener, FileChangeListen
 
 	@Override
 	public void onEnable() {
-		name=this.getDescription("name");
+		name = this.getDescription("name");
 		s = PluginSettings.getInstance(this);
 		t = t != null ? t : I18n.getInstance(this);
 		registerEventListener(this);
@@ -81,16 +83,21 @@ public class GlobalIntercom extends Plugin implements Listener, FileChangeListen
 		s.initSettings();
 
 		wsh = new WebSocketHandler(this);
-		wsc = WSClientEndpoint.getInstance(s.webSocketURI, wsh);
+		connectRelay(true);
 		PlayerPluginSettingsOverlay.registerPlayerPluginAdminSettings(
 				new PlayerPluginAdminSettings(name, getDescription("version"), () -> s.adminSettingsEntries(),
 						s::initSettings));
+		PluginInfoStatusProviders
+				.registerProvider(new GlobalIntercomPluginInfoStatusProvider(this, getDescription("version")));
 
 		logger().info("✅ " + this.getName() + " Plugin is enabled version:" + this.getDescription("version"));
 	}
 
 	@Override
 	public void onDisable() {
+		if (name != null) {
+			PluginInfoStatusProviders.unregisterProvider(name);
+		}
 		if (wsc != null) {
 			wsc.shutdown();
 		}
@@ -211,8 +218,7 @@ public class GlobalIntercom extends Plugin implements Listener, FileChangeListen
 				}
 					break;
 				case "info":
-					String infoMessage = t.get("CMD_INFO", lang);
-					player.sendTextMessage(c.okay + this.getName() + ":> " + infoMessage);
+					PluginInfoStatusProviders.show(player, name);
 					break;
 				case "help":
 					String helpMessage = t.get("CMD_HELP", lang)
@@ -233,45 +239,7 @@ public class GlobalIntercom extends Plugin implements Listener, FileChangeListen
 					player.sendTextMessage(c.okay + this.getName() + ":> " + helpMessage);
 					break;
 				case "status":
-					String lastCH = "lokal";
-					if (player.hasAttribute("gilastch")) {
-						lastCH = (String) player.getAttribute("gilastch");
-					}
-
-					String wsStatus = c.error + t.get("STATE_DISCONNECTED", lang);
-					if (wsc.isConnected()) {
-						wsStatus = c.okay + t.get("STATE_CONNECTED", lang);
-					}
-
-					String saveStatus = c.error + t.get("STATE_INACTIVE", lang);
-					if (giPlayer != null && giPlayer.saveSettings) {
-						saveStatus = c.okay + t.get("STATE_ACTIVE", lang);
-					}
-
-					String overrideStatus = "";
-					if (giPlayer != null && giPlayer.override) {
-						overrideStatus = c.okay + t.get("STATE_ON", lang);
-					} else {
-						overrideStatus = c.error + t.get("STATE_OFF", lang);
-					}
-					String playerChannelList = "";
-					if (giPlayer != null) {
-						playerChannelList = giPlayer.getChannelList();
-					}
-
-					String statusMessage = t.get("CMD_STATUS", lang)
-							.replace("PH_VERSION", c.okay + this.getDescription("version") + c.text)
-							.replace("PH_LANGUAGE",
-									s.colorSelf + player.getLanguage() + " / " + player.getSystemLanguage() + c.text)
-							.replace("PH_USEDLANG", s.colorOther + t.getLanguageUsed(lang) + c.text)
-							.replace("PH_LANG_AVAILABLE", c.okay + t.getLanguageAvailable() + c.text)
-							.replace("PH_STATE_WS", wsStatus + c.text)
-							.replace("PH_STATE_CH", c.command + lastCH + c.text)
-							.replace("PH_STATE_SAVE", saveStatus + c.text)
-							.replace("PH_STATE_OR", overrideStatus + c.text)
-							.replace("PH_CHLIST", c.command + playerChannelList + c.text);
-
-					player.sendTextMessage(c.okay + this.getName() + ":> " + statusMessage);
+					PluginInfoStatusProviders.show(player, name);
 					break;
 				case "override":
 					if (cmd.length > 2) {
@@ -288,6 +256,13 @@ public class GlobalIntercom extends Plugin implements Listener, FileChangeListen
 												c.command + "/" + pluginCMD + " override [true|false] " + c.text);
 						player.sendTextMessage(message);
 					}
+					break;
+				case "reconnect":
+					if (!player.isAdmin())
+						break;
+					connectRelay(true);
+					player.sendTextMessage(c.okay + this.getName() + ":> " + c.text
+							+ t.get("MSG_RECONNECT", lang).replace("PH_URI", s.webSocketURI.toString()));
 					break;
 				default:
 					player.sendTextMessage(c.error + this.getName() + ":> " + c.text
@@ -513,6 +488,42 @@ public class GlobalIntercom extends Plugin implements Listener, FileChangeListen
 		}
 	}
 
+	public static PluginSettings getSettings() {
+		return s;
+	}
+
+	public static boolean isRelayConnected() {
+		return wsc != null && wsc.isConnected();
+	}
+
+	public String getPluginVersion() {
+		return getDescription("version");
+	}
+
+	public String getCommandName() {
+		return pluginCMD;
+	}
+
+	public String getPlayerLastChannel(Player player) {
+		if (player != null && player.hasAttribute("gilastch")) {
+			return (String) player.getAttribute("gilastch");
+		}
+		return "lokal";
+	}
+
+	private void connectRelay(boolean reconnect) {
+		if (!isRelayConnected() || reconnect) {
+			if (isRelayConnected())
+				wsc.shutdown();
+			wsc = WSClientEndpoint.getInstance(s.webSocketURI, wsh);
+			wsc.init();
+		}
+	}
+
+	public GlobalIntercomPlayer getIntercomPlayer(Player player) {
+		return player == null ? null : playerMap.get(player.getUID() + "");
+	}
+
 	// All stuff for plugin updates
 
 	@Override
@@ -529,13 +540,15 @@ public class GlobalIntercom extends Plugin implements Listener, FileChangeListen
 
 	@Override
 	public void onSettingsChanged(Path file) {
-		s.initSettings();
+		s.initSettings(file.toString());
+		logger().setLevel(s.logLevel);
+		// reconnect websocket
+		connectRelay(true);
 		// updated settings msg to all
 		for (Player player : Server.getAllPlayers()) {
 			player.sendTextMessage(c.okay + this.getName() + ":> " + c.endTag
 					+ t.get("MSG_SETTINGS_UPDATED", player.getSystemLanguage()));
 		}
-		logger().setLevel(s.logLevel);
 	}
 
 }

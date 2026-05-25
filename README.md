@@ -37,3 +37,21 @@ Should look like this:
 - Run `mvn -B -DskipTests package` and `mvn -B test` before release-facing changes are merged.
 - Use `RUNTIME_TESTING.md` and `scripts/docker-runtime-smoke.sh <PluginFolderName>` for runtime smoke tests when behavior changes need server validation.
 - Keep `README.md` and `HISTORY.md` current and use Conventional Commit titles for commits and PRs.
+
+## Admin Settings And Status
+
+Global Intercom registers safe admin `PluginSettings` metadata through OZTools.
+Admins can edit grouped logging, runtime, relay, chat color, player-message, and
+screenshot settings from the shared Tools settings UI. Integer filtering for
+`maxScreenWidth` is provided by OZTools.
+
+The `/gi info` and `/gi status` commands open the shared OZTools plugin
+Info/Status panel. The panel reports relay connection state, player channel
+state, language data, and selected runtime settings.
+
+## Relay Contract
+
+The current WebSocket relay contract is documented in
+[docs/relay-contract.md](docs/relay-contract.md). Modernization keeps existing
+event names, payload shapes, and relay behavior unchanged so the Java plugin can
+remain compatible while `rw-girs` relay work is prepared.
