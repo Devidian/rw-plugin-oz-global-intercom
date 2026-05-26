@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [0.14.0] - 2026-05-26 | Shared plugin menu and status panel
+
 - fix: keep the Global Intercom PlayerSettings card within the shared Tools settings width
 - change: use the dedicated Global Intercom icon in the shared Tools plugin menu
 - feat: add a default Global Intercom PlayerSettings page
