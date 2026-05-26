@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+- fix: keep the Global Intercom PlayerSettings card within the shared Tools settings width
+- change: use the dedicated Global Intercom icon in the shared Tools plugin menu
+- feat: add a default Global Intercom PlayerSettings page
+- feat: add Global Intercom radial Info/Status entry using the shared Tools info icon
 - feat: add shared Tools Info/Status provider for Global Intercom and route `/gi info` plus `/gi status` to it
 - feat: expose grouped admin PluginSettings metadata for all safe Global Intercom settings
 - docs: document the current WebSocket relay contract for `rw-girs` compatibility work

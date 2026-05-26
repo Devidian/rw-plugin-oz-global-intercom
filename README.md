@@ -46,8 +46,9 @@ screenshot settings from the shared Tools settings UI. Integer filtering for
 `maxScreenWidth` is provided by OZTools.
 
 The `/gi info` and `/gi status` commands open the shared OZTools plugin
-Info/Status panel. The panel reports relay connection state, player channel
-state, language data, and selected runtime settings.
+Info/Status panel. The plugin radial menu entry opens the same panel using the
+portfolio-wide Info/Status icon. The panel reports relay connection state,
+player channel state, language data, and selected runtime settings.
 
 ## Relay Contract
 

@@ -34,10 +34,14 @@ import de.omegazirkel.risingworld.tools.FileChangeListener;
 import de.omegazirkel.risingworld.tools.I18n;
 import de.omegazirkel.risingworld.tools.OZLogger;
 import de.omegazirkel.risingworld.tools.WSClientEndpoint;
+import de.omegazirkel.risingworld.tools.ui.AssetManager;
+import de.omegazirkel.risingworld.tools.ui.MenuItem;
 import de.omegazirkel.risingworld.tools.ui.PluginInfoStatusProviders;
+import de.omegazirkel.risingworld.tools.ui.PluginMenuManager;
 import de.omegazirkel.risingworld.tools.settings.PlayerPluginAdminSettings;
 import de.omegazirkel.risingworld.tools.ui.PlayerPluginSettingsOverlay;
 import de.omegazirkel.risingworld.globalintercom.GlobalIntercomPluginInfoStatusProvider;
+import de.omegazirkel.risingworld.globalintercom.ui.GlobalIntercomPlayerPluginSettings;
 import net.risingworld.api.Plugin;
 import net.risingworld.api.Server;
 import net.risingworld.api.events.EventMethod;
@@ -84,13 +88,22 @@ public class GlobalIntercom extends Plugin implements Listener, FileChangeListen
 
 		wsh = new WebSocketHandler(this);
 		connectRelay(true);
+		AssetManager.loadIconFromPlugin(this, "icon-ki-global-intercom",
+				"/resources/assets/icons/icon-ki-global-intercom.png");
+		PlayerPluginSettingsOverlay
+				.registerPlayerPluginSettings(new GlobalIntercomPlayerPluginSettings(getDescription("version")));
 		PlayerPluginSettingsOverlay.registerPlayerPluginAdminSettings(
 				new PlayerPluginAdminSettings(name, getDescription("version"), () -> s.adminSettingsEntries(),
 						s::initSettings));
-		PluginInfoStatusProviders
-				.registerProvider(new GlobalIntercomPluginInfoStatusProvider(this, getDescription("version")));
+			PluginInfoStatusProviders
+					.registerProvider(new GlobalIntercomPluginInfoStatusProvider(this, getDescription("version")));
+			PluginMenuManager.registerPluginMenu(new MenuItem(AssetManager.getIcon("icon-ki-global-intercom"),
+					"Global Intercom", player -> {
+						player.hideRadialMenu(true);
+						PluginInfoStatusProviders.show(player, name);
+					}));
 
-		logger().info("✅ " + this.getName() + " Plugin is enabled version:" + this.getDescription("version"));
+			logger().info("✅ " + this.getName() + " Plugin is enabled version:" + this.getDescription("version"));
 	}
 
 	@Override

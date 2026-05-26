@@ -28,6 +28,7 @@ public class GlobalIntercomPluginInfoStatusProvider implements PluginInfoStatusP
 	public String getInfo(Player player) {
 		return t().get("TC_GLOBAL_INTERCOM_INFO_PANEL_INFO", player)
 				.replace("PH_PLUGIN_NAME", pluginName)
+				.replace("PH_VERSION", pluginVersion)
 				.replace("PH_PLUGIN_CMD", plugin.getCommandName());
 	}
 
@@ -38,7 +39,6 @@ public class GlobalIntercomPluginInfoStatusProvider implements PluginInfoStatusP
 		String lang = player.getSystemLanguage();
 
 		return t().get("TC_GLOBAL_INTERCOM_INFO_PANEL_STATUS", player)
-				.replace("PH_VERSION", pluginVersion)
 				.replace("PH_STATE_WS", state(GlobalIntercom.isRelayConnected(), "STATE_CONNECTED",
 						"STATE_DISCONNECTED", lang))
 				.replace("PH_DEFAULT_CHANNEL", settings == null ? "" : settings.defaultChannel)
@@ -51,9 +51,6 @@ public class GlobalIntercomPluginInfoStatusProvider implements PluginInfoStatusP
 				.replace("PH_LANGUAGE", player.getLanguage() + " / " + player.getSystemLanguage())
 				.replace("PH_USEDLANG", t().getLanguageUsed(lang))
 				.replace("PH_LANG_AVAILABLE", t().getLanguageAvailable())
-				.replace("PH_LOG_LEVEL", settings == null ? "" : settings.logLevel)
-				.replace("PH_RELOAD_ON_CHANGE", booleanText(settings != null && settings.reloadOnChange, lang))
-				.replace("PH_WELCOME_MESSAGE", booleanText(settings != null && settings.sendPluginWelcome, lang))
 				.replace("PH_SCREENSHOTS", booleanText(settings != null && settings.allowScreenshots, lang))
 				.replace("PH_MAX_SCREEN_WIDTH", settings == null ? "" : String.valueOf(settings.maxScreenWidth));
 	}
