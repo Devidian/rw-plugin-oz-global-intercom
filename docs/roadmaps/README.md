@@ -4,6 +4,7 @@ Large implementation plans and long-lived roadmap documents live here.
 
 ## Current Roadmaps
 
+- [Roadmap Plan 04 Plugin Runtime Standards](roadmap-plan-04-plugin-runtime-standards.md)
 - [Roadmap Plan 03 Menu Info Button](roadmap-plan-03-menu-info-button.md)
 - [Roadmap Plan 02 Modernization And Relay](roadmap-plan-02-modernization-and-relay.md)
 - [Roadmap Plan 01 Compatibility](roadmap-plan-01-compatibility.md)

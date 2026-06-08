@@ -9,6 +9,8 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.nio.file.Path;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
@@ -33,11 +35,14 @@ import de.omegazirkel.risingworld.tools.Colors;
 import de.omegazirkel.risingworld.tools.FileChangeListener;
 import de.omegazirkel.risingworld.tools.I18n;
 import de.omegazirkel.risingworld.tools.OZLogger;
+import de.omegazirkel.risingworld.tools.PlayerSettings;
 import de.omegazirkel.risingworld.tools.WSClientEndpoint;
+import de.omegazirkel.risingworld.tools.db.SQLiteConnectionFactory;
 import de.omegazirkel.risingworld.tools.ui.AssetManager;
 import de.omegazirkel.risingworld.tools.ui.MenuItem;
 import de.omegazirkel.risingworld.tools.ui.PluginInfoStatusProviders;
 import de.omegazirkel.risingworld.tools.ui.PluginMenuManager;
+import de.omegazirkel.risingworld.tools.ui.PluginShortcutVisibility;
 import de.omegazirkel.risingworld.tools.settings.PlayerPluginAdminSettings;
 import de.omegazirkel.risingworld.tools.ui.PlayerPluginSettingsOverlay;
 import de.omegazirkel.risingworld.globalintercom.GlobalIntercomPluginInfoStatusProvider;
@@ -68,6 +73,8 @@ public class GlobalIntercom extends Plugin implements Listener, FileChangeListen
 	private static I18n t = null;
 	private static PluginSettings s = null;
 	public static String name;
+	public static Connection sqliteCon;
+	public static PlayerSettings playerSettings;
 
 	static boolean flagRestart = false;
 
@@ -81,10 +88,12 @@ public class GlobalIntercom extends Plugin implements Listener, FileChangeListen
 	public void onEnable() {
 		name = this.getDescription("name");
 		s = PluginSettings.getInstance(this);
-		t = t != null ? t : I18n.getInstance(this);
+		t = I18n.getInstance(this);
 		registerEventListener(this);
 
 		s.initSettings();
+		sqliteCon = SQLiteConnectionFactory.open(this);
+		playerSettings = new PlayerSettings(sqliteCon);
 
 		wsh = new WebSocketHandler(this);
 		connectRelay(true);
@@ -97,7 +106,8 @@ public class GlobalIntercom extends Plugin implements Listener, FileChangeListen
 						s::initSettings));
 			PluginInfoStatusProviders
 					.registerProvider(new GlobalIntercomPluginInfoStatusProvider(this, getDescription("version")));
-			PluginMenuManager.registerPluginMenu(new MenuItem(AssetManager.getIcon("icon-ki-global-intercom"),
+			PluginShortcutVisibility.register(name, GlobalIntercomPlayerPluginSettings::shortcutVisible);
+			PluginMenuManager.registerPluginMenu(new MenuItem(name, AssetManager.getIcon("icon-ki-global-intercom"),
 					"Global Intercom", player -> {
 						player.hideRadialMenu(true);
 						PluginInfoStatusProviders.show(player, name);
@@ -109,10 +119,18 @@ public class GlobalIntercom extends Plugin implements Listener, FileChangeListen
 	@Override
 	public void onDisable() {
 		if (name != null) {
+			PluginShortcutVisibility.unregister(name);
 			PluginInfoStatusProviders.unregisterProvider(name);
 		}
 		if (wsc != null) {
 			wsc.shutdown();
+		}
+		if (sqliteCon != null) {
+			try {
+				sqliteCon.close();
+			} catch (SQLException ex) {
+				logger().warn("Failed to close Global Intercom database connection: " + ex.getMessage());
+			}
 		}
 		logger().warn("❌ " + this.getName() + " disabled.");
 	}

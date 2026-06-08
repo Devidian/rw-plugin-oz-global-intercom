@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+## [0.15.0] - 2026-06-08 | Persisted player settings
+
+- feat: add Global Intercom player shortcut visibility setting for `/ozt` and inventory shortcuts
+- change: persist Global Intercom player runtime settings through shared `PlayerSettings`
+- change: use one-time plugin i18n loading during enable
+
 ## [0.14.0] - 2026-05-26 | Shared plugin menu and status panel
 
 - fix: keep the Global Intercom PlayerSettings card within the shared Tools settings width

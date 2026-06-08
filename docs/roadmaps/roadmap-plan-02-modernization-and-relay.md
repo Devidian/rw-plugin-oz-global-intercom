@@ -21,7 +21,7 @@ Supporting repositories:
 - [x] Package 4: Add Global Intercom info/status panel content and redirect existing info/status commands to the shared Tools panel.
 - [x] Package 5: Review current WebSocket client contract and document required relay messages, channel state, player state, and reconnect behavior.
 - [x] Package 6: Coordinate compatibility with `rw-girs` and avoid backend-specific business logic leaking into Tools.
-- [ ] Package 7: Validate runtime behavior against the new relay server once `rw-girs` has a testable implementation.
+- [x] Package 7: Validate runtime behavior against the new relay server once `rw-girs` has a testable implementation.
 
 ## Step 6 Notes
 - Current standards gaps addressed: grouped admin settings metadata, full safe settings coverage, i18n labels/descriptions, shared Tools info/status provider registration, and `/gi info` plus `/gi status` redirection to the shared panel.
@@ -29,6 +29,10 @@ Supporting repositories:
 - Relay-contract constraints are documented in [../relay-contract.md](../relay-contract.md). Step 6 does not change WebSocket event names, payload classes, JSON field names, reconnect behavior, or relay state ownership.
 - `rw-girs` compatibility remains contract-first only. Runtime validation is deferred to Package 7 after the relay server has a testable implementation.
 - No `rw-plugin-maven-template` update is needed because this step modernizes one existing plugin and introduces no new cross-plugin structural rule.
+
+## Package 7 Progress
+- Connection to the running `rw-girs` instance and reconnect after a Rising World development-server restart passed on 2026-06-08.
+- Global Intercom message send and receive behavior was confirmed against the running relay.
 
 ## Risks
 - Updating plugin standards and relay behavior in the same step can hide protocol regressions.

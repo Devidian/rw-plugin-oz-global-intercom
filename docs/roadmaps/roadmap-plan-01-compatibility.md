@@ -14,8 +14,12 @@ Supporting repositories:
 - Existing relay/WebSocket backend assumptions remain unchanged.
 
 ## Work Packages
-- [ ] Package 1: Adopt shared settings reload/admin settings tab metadata if the portfolio-wide prework is applied to all plugins.
-- [ ] Package 2: Verify no Shop, Marketplace, Wallet, GPS, LandClaim, or Admin Utils work changes Intercom runtime dependency expectations.
+- [x] Package 1: Adopt shared settings reload/admin settings tab metadata if the portfolio-wide prework is applied to all plugins.
+- [x] Package 2: Verify no Shop, Marketplace, Wallet, GPS, LandClaim, or Admin Utils work changes Intercom runtime dependency expectations.
+
+## Completion Notes
+- Global Intercom adopted shared admin settings and current Tools runtime standards.
+- Cross-plugin Plan 03 and Plan 04 validation confirmed that feature-plugin economy and persistence work did not change the Intercom relay contract or runtime dependency expectations.
 
 ## Risks
 - None of the Roadmap Plan 01 features should alter WebSocket channel contracts.
