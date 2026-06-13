@@ -1,13 +1,9 @@
 package de.omegazirkel.risingworld.globalintercom;
 
-import java.lang.reflect.Type;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
 
 import de.omegazirkel.risingworld.GlobalIntercom;
-import de.omegazirkel.risingworld.globalintercom.entities.ChatMessage;
 import de.omegazirkel.risingworld.globalintercom.entities.GlobalIntercomPlayer;
 import de.omegazirkel.risingworld.globalintercom.entities.PlayerJoinChannelMessage;
 import de.omegazirkel.risingworld.globalintercom.entities.WSMessage;
@@ -44,28 +40,35 @@ public class WebSocketHandler implements de.omegazirkel.risingworld.tools.WebSoc
 
     @Override
     public void onTextMessage(String message) {
+        try {
+            IncomingRelayMessage incoming = IncomingRelayMessage.parse(message);
+            plugin.dispatchServer(() -> handleIncomingMessage(incoming));
+        } catch (RuntimeException ex) {
+            logger().warn("Invalid WebSocket message: " + ex.getMessage());
+        }
+    }
 
-        // log.out(message, 0);
-        WSMessage<?> wsm = new Gson().fromJson(message, WSMessage.class);
-        if (wsm.event.contentEquals("broadcastMessage")) {
-            Type type = new TypeToken<WSMessage<ChatMessage>>() {
-            }.getType();
-            // System.out.println(type);
-            WSMessage<ChatMessage> wscmsg = new Gson().fromJson(message, type);
-            // System.out.println(wscmsg.toString());
-            ChatMessage cmsg = wscmsg.payload;
-            logger().debug("New BC Message <" + cmsg.chatContent + "> from " + cmsg.playerName);
-            plugin.broadcastMessage(cmsg);
-        } else {
-            Type type = new TypeToken<WSMessage<GlobalIntercomPlayer>>() {
-            }.getType();
-            WSMessage<GlobalIntercomPlayer> wsmsg = new Gson().fromJson(message, type);
-            GlobalIntercomPlayer giPlayer = wsmsg.payload;
-            GlobalIntercom.playerMap.put(giPlayer._id, giPlayer);
-            Player player = Server.getPlayerByUID(giPlayer.id64);
-            String lang = player.getSystemLanguage();
+    private void handleIncomingMessage(IncomingRelayMessage incoming) {
+        if (incoming instanceof IncomingRelayMessage.Broadcast broadcast) {
+            logger().debug("New BC Message <" + broadcast.content() + "> from " + broadcast.playerName());
+            plugin.broadcastMessage(broadcast);
+        } else if (incoming instanceof IncomingRelayMessage.PlayerEvent playerEvent) {
+            handlePlayerMessage(playerEvent);
+        }
+    }
 
-            if (wsm.event.contentEquals("directContactMessage")) {
+    private void handlePlayerMessage(IncomingRelayMessage.PlayerEvent wsmsg) {
+        String event = wsmsg.event;
+        GlobalIntercomPlayer giPlayer = wsmsg.player.toEntity();
+        GlobalIntercom.playerMap.put(giPlayer._id, giPlayer);
+        Player player = Server.getPlayerByUID(giPlayer.id64);
+        if (player == null) {
+            logger().debug("Ignoring WebSocket event <" + event + "> for offline player " + giPlayer.id64);
+            return;
+        }
+        String lang = player.getSystemLanguage();
+
+            if (event.contentEquals("directContactMessage")) {
                 // Not yet implemented
             }
             // else if (wsm.event.contentEquals("registerPlayer")) {
@@ -75,7 +78,7 @@ public class WebSocketHandler implements de.omegazirkel.risingworld.tools.WebSoc
             // player.sendTextMessage(c.okay + pluginName + ":> " + c.text +
             // t().get("MSG_UNREGISTERED", lang));
             // }
-            else if (wsm.event.contentEquals("playerOnline")) {
+            else if (event.contentEquals("playerOnline")) {
                 if (!giPlayer.saveSettings && s.joinDefault && !giPlayer.isInChannel(s.defaultChannel)) {
                     PlayerJoinChannelMessage msg = new PlayerJoinChannelMessage(player);
                     msg.channel = s.defaultChannel;
@@ -83,9 +86,9 @@ public class WebSocketHandler implements de.omegazirkel.risingworld.tools.WebSoc
                     // event.getPlayer().setAttribute("gi." + defaultChannel, true);
                     // String lang = event.getPlayer().getSystemLanguage();
                 }
-            } else if (wsm.event.contentEquals("playerOffline")) {
+            } else if (event.contentEquals("playerOffline")) {
                 // Currently nothing to do here
-            } else if (wsm.event.contentEquals("playerOverrideChange")) {
+            } else if (event.contentEquals("playerOverrideChange")) {
                 {
                     boolean newVal = wsmsg.subject.contentEquals("true");
                     String msg = c.okay + plugin.getName() + ":> " + c.text + t().get("MSG_CMD_OVERRIDE_STATE", lang);
@@ -98,21 +101,21 @@ public class WebSocketHandler implements de.omegazirkel.risingworld.tools.WebSoc
 
                     player.sendTextMessage(msg);
                 }
-            } else if (wsm.event.contentEquals("playerJoinChannel")) {
+            } else if (event.contentEquals("playerJoinChannel")) {
                 String chName = wsmsg.subject;
                 player.sendTextMessage(
                         c.okay + plugin.getName() + ":> " + c.text
                                 + t().get("MSG_JOIN", lang).replace("PH_CHANNEL", chName));
-            } else if (wsm.event.contentEquals("playerLeaveChannel")) {
+            } else if (event.contentEquals("playerLeaveChannel")) {
                 String chName = wsmsg.subject;
                 player.sendTextMessage(c.warning + plugin.getName() + ":> " + c.text
                         + t().get("MSG_LEAVE", lang).replace("PH_CHANNEL", chName));
-            } else if (wsm.event.contentEquals("playerCreateChannel")) {
+            } else if (event.contentEquals("playerCreateChannel")) {
                 String chName = wsmsg.subject;
                 player.sendTextMessage(
                         c.okay + plugin.getName() + ":> " + c.text
                                 + t().get("MSG_CREATE", lang).replace("PH_CHANNEL", chName));
-            } else if (wsm.event.contentEquals("playerResponseError")) {
+            } else if (event.contentEquals("playerResponseError")) {
                 String code = wsmsg.errorCode;
                 String baseMessage = c.error + plugin.getName() + ":> " + c.text + t().get(code, lang);
                 switch (code) {
@@ -165,7 +168,7 @@ public class WebSocketHandler implements de.omegazirkel.risingworld.tools.WebSoc
                         break;
                 }
                 player.sendTextMessage(baseMessage);
-            } else if (wsm.event.contentEquals("playerResponseSuccess")) {
+            } else if (event.contentEquals("playerResponseSuccess")) {
                 String code = wsmsg.successCode;
                 String baseMessage = c.okay + plugin.getName() + ":> " + c.text + t().get(code, lang);
                 switch (code) {
@@ -191,7 +194,7 @@ public class WebSocketHandler implements de.omegazirkel.risingworld.tools.WebSoc
                         break;
                 }
                 player.sendTextMessage(baseMessage);
-            } else if (wsm.event.contentEquals("playerResponseInfo")) {
+            } else if (event.contentEquals("playerResponseInfo")) {
                 String code = wsmsg.infoCode;
                 String baseMessage = c.text + plugin.getName() + ":> " + c.text + t().get(code, lang);
                 // switch (code) {
@@ -201,9 +204,8 @@ public class WebSocketHandler implements de.omegazirkel.risingworld.tools.WebSoc
                 // }
                 player.sendTextMessage(baseMessage);
             } else {
-                logger().warn("Unknown message type <" + wsm.event + ">");
+                logger().warn("Unknown message type <" + event + ">");
             }
-        }
     }
 
     /**
@@ -213,21 +215,24 @@ public class WebSocketHandler implements de.omegazirkel.risingworld.tools.WebSoc
      * this Method converts a WSMessage to JSON and sends it through WS
      */
     public void transmitMessageWS(Player player, WSMessage<?> wsmsg) {
-        GsonBuilder gsb = new GsonBuilder();
-        Gson gson = gsb.create();
         String lang = player.getSystemLanguage();
 
         try {
-            if (wsc != null && wsc.isConnected()) {
-                String msg = gson.toJson(wsmsg);
-                wsc.send(msg);
-            } else {
+            if (!transmitMessageWS(wsmsg)) {
                 player.sendTextMessage(c.error + plugin.getName() + ":> " + c.text + t().get("MSG_WS_OFFLINE", lang));
             }
         } catch (Exception e) {
             player.sendTextMessage(c.error + plugin.getName() + ":>" + c.text + " " + e.getMessage());
             // this.initWebSocketClient();
         }
+    }
+
+    public boolean transmitMessageWS(WSMessage<?> wsmsg) {
+        if (wsc == null || !wsc.isConnected()) {
+            return false;
+        }
+        Gson gson = new GsonBuilder().create();
+        return wsc.send(gson.toJson(wsmsg));
     }
 
 }

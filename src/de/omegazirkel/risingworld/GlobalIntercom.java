@@ -18,6 +18,7 @@ import java.util.Map;
 import javax.imageio.ImageIO;
 
 import de.omegazirkel.risingworld.globalintercom.PluginSettings;
+import de.omegazirkel.risingworld.globalintercom.IncomingRelayMessage;
 import de.omegazirkel.risingworld.globalintercom.WebSocketHandler;
 import de.omegazirkel.risingworld.globalintercom.entities.ChatMessage;
 import de.omegazirkel.risingworld.globalintercom.entities.GlobalIntercomPlayer;
@@ -36,6 +37,7 @@ import de.omegazirkel.risingworld.tools.FileChangeListener;
 import de.omegazirkel.risingworld.tools.I18n;
 import de.omegazirkel.risingworld.tools.OZLogger;
 import de.omegazirkel.risingworld.tools.PlayerSettings;
+import de.omegazirkel.risingworld.tools.ServerThreadDispatcher;
 import de.omegazirkel.risingworld.tools.WSClientEndpoint;
 import de.omegazirkel.risingworld.tools.db.SQLiteConnectionFactory;
 import de.omegazirkel.risingworld.tools.ui.AssetManager;
@@ -75,6 +77,7 @@ public class GlobalIntercom extends Plugin implements Listener, FileChangeListen
 	public static String name;
 	public static Connection sqliteCon;
 	public static PlayerSettings playerSettings;
+	private ServerThreadDispatcher serverThreadDispatcher;
 
 	static boolean flagRestart = false;
 
@@ -87,6 +90,7 @@ public class GlobalIntercom extends Plugin implements Listener, FileChangeListen
 	@Override
 	public void onEnable() {
 		name = this.getDescription("name");
+		serverThreadDispatcher = new ServerThreadDispatcher(this);
 		s = PluginSettings.getInstance(this);
 		t = I18n.getInstance(this);
 		registerEventListener(this);
@@ -118,6 +122,9 @@ public class GlobalIntercom extends Plugin implements Listener, FileChangeListen
 
 	@Override
 	public void onDisable() {
+		if (serverThreadDispatcher != null) {
+			serverThreadDispatcher.close();
+		}
 		if (name != null) {
 			PluginShortcutVisibility.unregister(name);
 			PluginInfoStatusProviders.unregisterProvider(name);
@@ -432,7 +439,7 @@ public class GlobalIntercom extends Plugin implements Listener, FileChangeListen
 					}
 					cmsg.chatContent = chatMessage.replace("+screen", "[screenshot.jpg]");
 					WSMessage<ChatMessage> wsbcm = new WSMessage<>("broadcastMessage", cmsg);
-					wsh.transmitMessageWS(player, wsbcm);
+					wsh.transmitMessageWS(wsbcm);
 				});
 			} else {
 				cmsg.chatContent = chatMessage.replace("+screen", "[noimage.jpg]");
@@ -444,6 +451,10 @@ public class GlobalIntercom extends Plugin implements Listener, FileChangeListen
 			WSMessage<ChatMessage> wsbcm = new WSMessage<>("broadcastMessage", cmsg);
 			wsh.transmitMessageWS(player, wsbcm);
 		}
+	}
+
+	public boolean dispatchServer(Runnable task) {
+		return serverThreadDispatcher != null && serverThreadDispatcher.dispatch(task);
 	}
 
 	/**
@@ -500,6 +511,20 @@ public class GlobalIntercom extends Plugin implements Listener, FileChangeListen
 			}
 		}
 
+	}
+
+	public void broadcastMessage(IncomingRelayMessage.Broadcast message) {
+		for (Player player : Server.getAllPlayers()) {
+			if (!playerMap.containsKey(player.getUID() + "")) {
+				return;
+			}
+			GlobalIntercomPlayer giPlayer = playerMap.get(player.getUID() + "");
+			if (giPlayer != null && giPlayer.isInChannel(message.channel())) {
+				String color = (player.getUID() + "").contentEquals(message.playerUid()) ? s.colorSelf : s.colorOther;
+				player.sendTextMessage(color + "[" + message.channel().toUpperCase() + "] " + message.playerName()
+						+ ": " + c.text + message.content());
+			}
+		}
 	}
 
 	/**

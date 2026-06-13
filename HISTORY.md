@@ -1,6 +1,13 @@
 # Changelog
 
-## [Unreleased]
+## [0.15.1] - 2026-06-13 | Callback thread safety
+
+- fix: dispatch WebSocket-driven game operations onto the server thread
+- fix: parse WebSocket payloads before dispatching game operations
+- refactor: dispatch immutable relay message values instead of mutable parsed entities
+- test: cover broadcast and player-event relay parsing
+- fix: separate transport-only WebSocket sends from player-aware response handling
+- fix: avoid retaining `Player` objects in asynchronous screenshot callbacks
 
 ## [0.15.0] - 2026-06-08 | Persisted player settings
 

@@ -2,6 +2,8 @@
 
 Active implementation tasks live here.
 
+[Bugs 05 WebSocket Threading](bugs-05-websocket-threading.md)
+
 Use one markdown file per task. Each task must include objective, ownership, dependencies, risks, validation strategy, affected repositories/plugins, rollback considerations, and a markdown checkbox checklist.
 
 ## Template
