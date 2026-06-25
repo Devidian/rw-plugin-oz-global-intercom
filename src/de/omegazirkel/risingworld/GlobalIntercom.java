@@ -18,6 +18,7 @@ import java.util.Map;
 import javax.imageio.ImageIO;
 
 import de.omegazirkel.risingworld.globalintercom.PluginSettings;
+import de.omegazirkel.risingworld.globalintercom.ChatShortcutParser;
 import de.omegazirkel.risingworld.globalintercom.IncomingRelayMessage;
 import de.omegazirkel.risingworld.globalintercom.WebSocketHandler;
 import de.omegazirkel.risingworld.globalintercom.entities.ChatMessage;
@@ -417,9 +418,10 @@ public class GlobalIntercom extends Plugin implements Listener, FileChangeListen
 		}
 
 		event.setCancelled(true);
-		ChatMessage cmsg = new ChatMessage(player, chatMessage, channel);
+		ChatShortcutParser.Result shortcuts = ChatShortcutParser.parse(chatMessage);
+		ChatMessage cmsg = new ChatMessage(player, shortcuts.message(), channel);
 
-		if (chatMessage.contains("+screen")) {
+		if (shortcuts.hasScreenshot()) {
 			if (s.allowScreenshots == true) {
 				int playerResolutionX = player.getScreenResolutionX();
 				float sizeFactor = 1.0f;
@@ -427,7 +429,7 @@ public class GlobalIntercom extends Plugin implements Listener, FileChangeListen
 					sizeFactor = s.maxScreenWidth * 1f / playerResolutionX * 1f;
 				}
 
-				player.createScreenshot(sizeFactor, 1, !chatMessage.contains("+screennogui"), (BufferedImage bimg) -> {
+				player.createScreenshot(sizeFactor, 1, !shortcuts.screenshotWithoutGui(), (BufferedImage bimg) -> {
 					final ByteArrayOutputStream os = new ByteArrayOutputStream();
 					try {
 						ImageIO.write(bimg, "jpg", os);
@@ -437,12 +439,10 @@ public class GlobalIntercom extends Plugin implements Listener, FileChangeListen
 						logger().fatal("Exception on createScreenshot-> " + e.toString());
 						// e.printStackTrace();
 					}
-					cmsg.chatContent = chatMessage.replace("+screen", "[screenshot.jpg]");
 					WSMessage<ChatMessage> wsbcm = new WSMessage<>("broadcastMessage", cmsg);
 					wsh.transmitMessageWS(wsbcm);
 				});
 			} else {
-				cmsg.chatContent = chatMessage.replace("+screen", "[noimage.jpg]");
 				player.sendTextMessage(t.get("MSG_SCREEN_NOTALLOWED", lang));
 				WSMessage<ChatMessage> wsbcm = new WSMessage<>("broadcastMessage", cmsg);
 				wsh.transmitMessageWS(player, wsbcm);

@@ -29,7 +29,7 @@ public sealed interface IncomingRelayMessage permits IncomingRelayMessage.Broadc
                 throw new IllegalArgumentException("Broadcast message has no payload");
             }
             return new Broadcast(envelope.event, payload.chatContent, payload.chatChannel, payload.playerName,
-                    payload.playerUID);
+                    payload.playerUID, payload.sourceName, payload.sourceIP, payload.sourceVersion, payload.attachment);
         }
 
         Type type = new TypeToken<WSMessage<GlobalIntercomPlayer>>() {
@@ -42,13 +42,18 @@ public sealed interface IncomingRelayMessage permits IncomingRelayMessage.Broadc
                 message.successCode, message.errorCode);
     }
 
-    record Broadcast(String event, String content, String channel, String playerName, String playerUid)
+    record Broadcast(String event, String content, String channel, String playerName, String playerUid,
+            String sourceName, String sourceIp, String sourceVersion, String attachment)
             implements IncomingRelayMessage {
         public Broadcast {
             content = safe(content);
             channel = safe(channel);
             playerName = safe(playerName);
             playerUid = safe(playerUid);
+            sourceName = safe(sourceName);
+            sourceIp = safe(sourceIp);
+            sourceVersion = safe(sourceVersion);
+            attachment = safe(attachment);
         }
     }
 

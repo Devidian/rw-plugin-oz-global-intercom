@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.15.2] - 2026-06-25 | Screenshot relay compatibility
+
+- fix: parse `+screen`, `+s`, `+screennogui`, and `+sng` as screenshot shortcuts and replace them with the screenshot icon in relayed chat
+- fix: preserve relay broadcast source metadata and attachment data when parsing incoming WebSocket messages
+
 ## [0.15.1] - 2026-06-13 | Callback thread safety
 
 - fix: dispatch WebSocket-driven game operations onto the server thread

@@ -17,7 +17,11 @@ public class IncomingRelayMessageTest {
                     "chatContent": "hello",
                     "chatChannel": "global",
                     "playerName": "Maik",
-                    "playerUID": "123"
+                    "playerUID": "123",
+                    "sourceName": "Game",
+                    "sourceIP": "127.0.0.1",
+                    "sourceVersion": "1.2.3",
+                    "attachment": "abc"
                   }
                 }
                 """);
@@ -27,6 +31,10 @@ public class IncomingRelayMessageTest {
         assertEquals("global", broadcast.channel());
         assertEquals("Maik", broadcast.playerName());
         assertEquals("123", broadcast.playerUid());
+        assertEquals("Game", broadcast.sourceName());
+        assertEquals("127.0.0.1", broadcast.sourceIp());
+        assertEquals("1.2.3", broadcast.sourceVersion());
+        assertEquals("abc", broadcast.attachment());
     }
 
     @Test
