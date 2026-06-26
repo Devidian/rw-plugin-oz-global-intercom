@@ -36,6 +36,7 @@ public class WebSocketHandler implements de.omegazirkel.risingworld.tools.WebSoc
     public void onConnected(WSClientEndpoint wsce) {
         wsc = wsce;
         logger().info("🔌 Websocket Connected");
+        plugin.dispatchServer(() -> plugin.resyncOnlinePlayersWithRelay());
     }
 
     @Override
@@ -60,6 +61,7 @@ public class WebSocketHandler implements de.omegazirkel.risingworld.tools.WebSoc
     private void handlePlayerMessage(IncomingRelayMessage.PlayerEvent wsmsg) {
         String event = wsmsg.event;
         GlobalIntercomPlayer giPlayer = wsmsg.player.toEntity();
+        GlobalIntercomPlayer previousPlayer = GlobalIntercom.playerMap.get(giPlayer._id);
         GlobalIntercom.playerMap.put(giPlayer._id, giPlayer);
         Player player = Server.getPlayerByUID(giPlayer.id64);
         if (player == null) {
@@ -86,6 +88,7 @@ public class WebSocketHandler implements de.omegazirkel.risingworld.tools.WebSoc
                     // event.getPlayer().setAttribute("gi." + defaultChannel, true);
                     // String lang = event.getPlayer().getSystemLanguage();
                 }
+                rejoinPreviousChannels(player, giPlayer, previousPlayer);
             } else if (event.contentEquals("playerOffline")) {
                 // Currently nothing to do here
             } else if (event.contentEquals("playerOverrideChange")) {
@@ -206,6 +209,20 @@ public class WebSocketHandler implements de.omegazirkel.risingworld.tools.WebSoc
             } else {
                 logger().warn("Unknown message type <" + event + ">");
             }
+    }
+
+    private void rejoinPreviousChannels(Player player, GlobalIntercomPlayer giPlayer, GlobalIntercomPlayer previousPlayer) {
+        if (previousPlayer == null || previousPlayer.channels == null) {
+            return;
+        }
+        for (String channel : previousPlayer.channels) {
+            if (channel == null || channel.isBlank() || giPlayer.isInChannel(channel)) {
+                continue;
+            }
+            PlayerJoinChannelMessage msg = new PlayerJoinChannelMessage(player);
+            msg.channel = channel;
+            transmitMessageWS(player, new WSMessage<>("playerJoinChannel", msg));
+        }
     }
 
     /**

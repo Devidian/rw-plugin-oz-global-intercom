@@ -489,6 +489,12 @@ public class GlobalIntercom extends Plugin implements Listener, FileChangeListen
 		wsh.transmitMessageWS(player, wsmsg);
 	}
 
+	public void resyncOnlinePlayersWithRelay() {
+		for (Player player : Server.getAllPlayers()) {
+			sendPlayerOnlineNotification(player);
+		}
+	}
+
 	/**
 	 *
 	 * @version 0.8.1
@@ -498,7 +504,7 @@ public class GlobalIntercom extends Plugin implements Listener, FileChangeListen
 
 		for (Player player : Server.getAllPlayers()) {
 			if (!playerMap.containsKey(player.getUID() + "")) {
-				return; // Player not initialized with GI
+				continue; // Player not initialized with GI
 			}
 			GlobalIntercomPlayer giPlayer = playerMap.get(player.getUID() + "");
 			if (giPlayer != null && giPlayer.isInChannel(cmsg.chatChannel)) {
@@ -516,7 +522,7 @@ public class GlobalIntercom extends Plugin implements Listener, FileChangeListen
 	public void broadcastMessage(IncomingRelayMessage.Broadcast message) {
 		for (Player player : Server.getAllPlayers()) {
 			if (!playerMap.containsKey(player.getUID() + "")) {
-				return;
+				continue;
 			}
 			GlobalIntercomPlayer giPlayer = playerMap.get(player.getUID() + "");
 			if (giPlayer != null && giPlayer.isInChannel(message.channel())) {

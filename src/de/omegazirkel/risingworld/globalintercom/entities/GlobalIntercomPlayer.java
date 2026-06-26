@@ -19,7 +19,7 @@ public class GlobalIntercomPlayer {
      * @return
      */
     public boolean isInChannel(String chName) {
-        return this.channels.contains(chName);
+        return this.channels != null && this.channels.contains(chName);
     }
 
     /**
@@ -28,9 +28,11 @@ public class GlobalIntercomPlayer {
      */
     public String getChannelList() {
         StringBuilder sb = new StringBuilder();
-        this.channels.forEach(ch -> {
-            sb.append(ch + " ");
-        });
+        if (this.channels != null) {
+            this.channels.forEach(ch -> {
+                sb.append(ch + " ");
+            });
+        }
         return sb.toString();
     }
 }

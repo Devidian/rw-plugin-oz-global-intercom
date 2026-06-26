@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.15.3] - 2026-06-26 | Relay reconnect recovery
+
+- fix: resync online players after WebSocket reconnect so relay state is restored after GIRS restarts
+- fix: rejoin transient player channels after reconnect when relay persistence has no saved channel list
+- fix: continue incoming broadcasts when one online player has not finished GI initialization
+
 ## [0.15.2] - 2026-06-25 | Screenshot relay compatibility
 
 - fix: parse `+screen`, `+s`, `+screennogui`, and `+sng` as screenshot shortcuts and replace them with the screenshot icon in relayed chat
