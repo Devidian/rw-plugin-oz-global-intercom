@@ -102,8 +102,7 @@ public class GlobalIntercom extends Plugin implements Listener, FileChangeListen
 
 		wsh = new WebSocketHandler(this);
 		connectRelay(true);
-		AssetManager.loadIconFromPlugin(this, "icon-ki-global-intercom",
-				"/resources/assets/icons/icon-ki-global-intercom.png");
+		AssetManager.loadIconFromPlugin(this, "icon-ki-global-intercom");
 		PlayerPluginSettingsOverlay
 				.registerPlayerPluginSettings(new GlobalIntercomPlayerPluginSettings(getDescription("version")));
 		PlayerPluginSettingsOverlay.registerPlayerPluginAdminSettings(
@@ -112,7 +111,7 @@ public class GlobalIntercom extends Plugin implements Listener, FileChangeListen
 			PluginInfoStatusProviders
 					.registerProvider(new GlobalIntercomPluginInfoStatusProvider(this, getDescription("version")));
 			PluginShortcutVisibility.register(name, GlobalIntercomPlayerPluginSettings::shortcutVisible);
-			PluginMenuManager.registerPluginMenu(new MenuItem(name, AssetManager.getIcon("icon-ki-global-intercom"),
+			PluginMenuManager.registerPluginMenu(new MenuItem(name, "icon-ki-global-intercom",
 					"Global Intercom", player -> {
 						player.hideRadialMenu(true);
 						PluginInfoStatusProviders.show(player, name);
