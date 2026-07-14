@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.15.4] - 2026-07-14 | Icon set polish
+
+- change: rename the Global Intercom icon key to its final semantic name
+
 ## [0.15.3] - 2026-06-26 | Relay reconnect recovery
 
 - fix: resync online players after WebSocket reconnect so relay state is restored after GIRS restarts
