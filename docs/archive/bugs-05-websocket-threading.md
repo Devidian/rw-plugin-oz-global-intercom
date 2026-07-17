@@ -1,4 +1,4 @@
-# Bugs 05 WebSocket Threading
+# Bugs 05 WebSocket Threading (Closed 2026-07-15)
 
 ## Objective
 Complete WebSocket message-boundary hardening and runtime validation after
@@ -21,9 +21,9 @@ Supporting repositories/plugins: `rw-plugin-oz-tools`
 - [x] `mvn -B test`
 - [x] `mvn -B -DskipTests package`
 - [x] Runtime-test one game-to-relay message
-- [ ] Runtime-test relay messages, channel responses, screenshots, reconnect,
+- [x] Runtime-test relay messages, channel responses, screenshots, reconnect,
   reload, and shutdown
-- [ ] Run sustained multi-server relay activity during the native-crash soak
+- [x] Run sustained multi-server relay activity during the native-crash soak
 
 ## Affected Repositories/Plugins
 - `rw-plugin-oz-global-intercom`
@@ -40,4 +40,4 @@ wire contract when replacing mutable parsed entities.
 - [x] Remove retained Player access from screenshot callbacks
 - [x] Replace mutable parsed entities with immutable message values
 - [x] Add focused message-boundary regression tests
-- [ ] Complete multi-server runtime validation
+- [x] Complete multi-server runtime validation

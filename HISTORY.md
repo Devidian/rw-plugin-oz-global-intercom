@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.15.5] - 2026-07-17 | Thread-runtime validation closure
+
+- docs: archive the completed WebSocket threading plan
+
 ## [0.15.4] - 2026-07-14 | Icon set polish
 
 - change: rename the Global Intercom icon key to its final semantic name
