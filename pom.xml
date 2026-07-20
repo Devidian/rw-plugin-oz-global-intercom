@@ -5,7 +5,7 @@
 
 	<groupId>com.github.devidian</groupId>
 	<artifactId>rw-plugin-oz-global-intercom</artifactId>
-    <version>0.15.5</version>
+	<version>0.15.6</version>
 	<packaging>jar</packaging>
 	<name>OZGlobalIntercom</name>
 
@@ -43,7 +43,7 @@
 		<dependency>
 			<groupId>com.github.devidian</groupId>
 			<artifactId>rw-plugin-oz-tools</artifactId>
-            <version>0.22.1</version>
+			<version>0.22.3</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>

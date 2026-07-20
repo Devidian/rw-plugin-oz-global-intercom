@@ -7,7 +7,6 @@ import de.omegazirkel.risingworld.tools.ui.OZUIElement;
 import de.omegazirkel.risingworld.tools.ui.PlayerPluginSettings;
 import de.omegazirkel.risingworld.tools.ui.PluginShortcutVisibility;
 import net.risingworld.api.objects.Player;
-import net.risingworld.api.ui.UILabel;
 import net.risingworld.api.ui.style.Unit;
 
 public class GlobalIntercomPlayerPluginSettings extends PlayerPluginSettings {
@@ -27,11 +26,6 @@ public class GlobalIntercomPlayerPluginSettings extends PlayerPluginSettings {
             protected void redrawContent() {
                 flexWrapper.removeAllChilds();
                 flexWrapper.addChild(shortcutSetting(uiPlayer));
-                OZUIElement element = defaultSettingsContainer();
-                element.style.width.set(95, Unit.Percent);
-                UILabel label = defaultSettingsLabel(t().get("TC_SETTINGS_EMPTY", uiPlayer));
-                element.addChild(label);
-                flexWrapper.addChild(element);
             }
 
             protected OZUIElement shortcutSetting(Player uiPlayer) {

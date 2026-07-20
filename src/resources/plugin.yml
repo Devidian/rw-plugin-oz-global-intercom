@@ -1,9 +1,9 @@
 name: "OZ - Global Intercom"
 main: de.omegazirkel.risingworld.GlobalIntercom
-version: 0.15.5
+version: 0.15.6
 author: "Maik 'Devidian' Laschober"
 team: "Omega Zirkel"
 description: "This Plugin enables chat between servers (Singleplayer too)"
 license: EMS
-website: coming soon
+website: https://api.github.com/repos/Devidian/rw-plugin-oz-global-intercom/releases/latest
 loadorder: -100

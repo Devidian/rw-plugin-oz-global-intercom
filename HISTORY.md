@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.15.6] - 2026-07-20 | Player settings clarity
+
+- fix: show only the available Global Intercom shortcut setting instead of an
+  incorrect empty-settings notice
+- change: publish canonical GitHub release metadata for the OZ Tools update
+  catalogue
+
 ## [0.15.5] - 2026-07-17 | Thread-runtime validation closure
 
 - docs: archive the completed WebSocket threading plan
