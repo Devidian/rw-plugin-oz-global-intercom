@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.15.7] - 2026-07-20 | Advanced button controls
+
+- change: update the shared OZ Tools UI dependency to the stable button controls
+
 ## [0.15.6] - 2026-07-20 | Player settings clarity
 
 - fix: show only the available Global Intercom shortcut setting instead of an
