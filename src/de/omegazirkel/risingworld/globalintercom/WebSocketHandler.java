@@ -68,7 +68,7 @@ public class WebSocketHandler implements de.omegazirkel.risingworld.tools.WebSoc
             logger().debug("Ignoring WebSocket event <" + event + "> for offline player " + giPlayer.id64);
             return;
         }
-        String lang = player.getSystemLanguage();
+        String lang = de.omegazirkel.risingworld.OZTools.getPlayerLanguage(player);
 
             if (event.contentEquals("directContactMessage")) {
                 // Not yet implemented
@@ -232,7 +232,7 @@ public class WebSocketHandler implements de.omegazirkel.risingworld.tools.WebSoc
      * this Method converts a WSMessage to JSON and sends it through WS
      */
     public void transmitMessageWS(Player player, WSMessage<?> wsmsg) {
-        String lang = player.getSystemLanguage();
+        String lang = de.omegazirkel.risingworld.OZTools.getPlayerLanguage(player);
 
         try {
             if (!transmitMessageWS(wsmsg)) {

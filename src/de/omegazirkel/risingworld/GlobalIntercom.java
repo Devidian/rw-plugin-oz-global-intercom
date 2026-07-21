@@ -161,7 +161,7 @@ public class GlobalIntercom extends Plugin implements Listener, FileChangeListen
 	public void onPlayerCommand(PlayerCommandEvent event) {
 		Player player = event.getPlayer();
 		String command = event.getCommand();
-		String lang = event.getPlayer().getSystemLanguage();
+		String lang = de.omegazirkel.risingworld.OZTools.getPlayerLanguage(event.getPlayer());
 		GlobalIntercomPlayer giPlayer = playerMap.get(player.getUID() + "");
 
 		String[] cmd = command.split(" ");
@@ -336,7 +336,7 @@ public class GlobalIntercom extends Plugin implements Listener, FileChangeListen
 		String message = event.getChatMessage();
 		String chatMessage;
 		String channel;
-		String lang = event.getPlayer().getSystemLanguage();
+		String lang = de.omegazirkel.risingworld.OZTools.getPlayerLanguage(event.getPlayer());
 		// log.out("message: "+message,0);
 		String noColorText = message.replaceAll("</?color(?:=#?[A-Fa-f0-9]{6})?>", "");
 		// log.out("noColorText: "+noColorText,0);
@@ -464,7 +464,7 @@ public class GlobalIntercom extends Plugin implements Listener, FileChangeListen
 	public void onPlayerSpawn(PlayerSpawnEvent event) {
 		Player player = event.getPlayer();
 		if (s.sendPluginWelcome) {
-			String lang = player.getSystemLanguage();
+			String lang = de.omegazirkel.risingworld.OZTools.getPlayerLanguage(player);
 			player.sendTextMessage(t.get("MSG_PLUGIN_WELCOME", lang)
 					.replace("PH_PLUGIN_NAME", getDescription("name"))
 					.replace("PH_PLUGIN_CMD", pluginCMD)
@@ -540,7 +540,7 @@ public class GlobalIntercom extends Plugin implements Listener, FileChangeListen
 	public void broadcastMessage(String i18nIndex, int playerCount) {
 		for (Player player : Server.getAllPlayers()) {
 			try {
-				String lang = player.getSystemLanguage();
+				String lang = de.omegazirkel.risingworld.OZTools.getPlayerLanguage(player);
 				player.sendTextMessage(c.warning + this.getName() + ":> " + c.endTag
 						+ t.get(i18nIndex, lang).replace("PH_PLAYERS", playerCount + ""));
 			} catch (Exception e) {
@@ -594,7 +594,7 @@ public class GlobalIntercom extends Plugin implements Listener, FileChangeListen
 			// Plugin updated msg to all
 			for (Player player : Server.getAllPlayers()) {
 				player.sendTextMessage(c.okay + this.getName() + ":> " + c.endTag
-						+ t.get("MSG_PLUGIN_UPDATED", player.getSystemLanguage()));
+						+ t.get("MSG_PLUGIN_UPDATED", de.omegazirkel.risingworld.OZTools.getPlayerLanguage(player)));
 			}
 		}
 	}
@@ -608,7 +608,7 @@ public class GlobalIntercom extends Plugin implements Listener, FileChangeListen
 		// updated settings msg to all
 		for (Player player : Server.getAllPlayers()) {
 			player.sendTextMessage(c.okay + this.getName() + ":> " + c.endTag
-					+ t.get("MSG_SETTINGS_UPDATED", player.getSystemLanguage()));
+					+ t.get("MSG_SETTINGS_UPDATED", de.omegazirkel.risingworld.OZTools.getPlayerLanguage(player)));
 		}
 	}
 
