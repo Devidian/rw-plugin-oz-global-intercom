@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.15.8] - 2026-07-21 | Shared Tools update
+
+- change: update the shared OZ Tools dependency to version 0.23.1
+
 ## [0.15.7] - 2026-07-20 | Advanced button controls
 
 - change: update the shared OZ Tools UI dependency to the stable button controls
