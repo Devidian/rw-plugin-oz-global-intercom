@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+## [0.15.10] - 2026-07-24 | Runtime architecture
+
+- refactor: keep the plugin entry point limited to lifecycle wiring and event delegation
+- change: update the shared OZ Tools dependency to version 0.23.8
+
 ## [0.15.8] - 2026-07-21 | Shared Tools update
 
 - change: update the shared OZ Tools dependency to version 0.23.1
