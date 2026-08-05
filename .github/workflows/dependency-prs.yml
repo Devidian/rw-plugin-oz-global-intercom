@@ -20,7 +20,7 @@ jobs:
           echo "VERSION=${VERSION}" >> $GITHUB_ENV
 
       - name: Checkout DiscordPlugin
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           repository: Devidian/rw-plugin-oz-discord-connect
           path: discord
@@ -32,7 +32,7 @@ jobs:
           sed -i "s|\(<artifactId>rw-plugin-oz-global-intercom<\/artifactId>.*<version>\)[^<]*|\1${VERSION}|" pom.xml
 
       - name: Commit & PR
-        uses: peter-evans/create-pull-request@v6
+        uses: peter-evans/create-pull-request@v7
         with:
           path: discord
           token: ${{ secrets.GITHUB_TOKEN }}

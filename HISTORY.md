@@ -1,6 +1,8 @@
 # Changelog
 
-## Unreleased
+## [0.15.11] - 2026-08-05 | CI maintenance
+
+- build: maintain the GitHub Actions release workflow.
 
 ## [0.15.10] - 2026-07-24 | Runtime architecture
 
