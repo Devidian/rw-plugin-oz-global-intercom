@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## [0.16.0] - 2026-08-11 | Relay server presence
 
 - feat: register the configured server short name with compatible GIRS relays
   for channel-presence lists
