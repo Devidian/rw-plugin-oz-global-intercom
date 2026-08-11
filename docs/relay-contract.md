@@ -19,6 +19,9 @@ the typed payload in `payload`.
 - `playerLeaveChannel`: `PlayerLeaveChannelMessage`
 - `playerOverrideChange`: `PlayerOverrideChangeMessage`
 - `broadcastMessage`: `ChatMessage`
+- `serverRegister`: `{ "shortName": "..." }`, sent after every relay
+  connection. It uses `Server_ShortName` from `server.properties` and falls
+  back to the Rising World server name.
 
 ## Inbound Events And Responses
 
@@ -46,6 +49,9 @@ The plugin currently handles these inbound event names:
 - `playerResponseInfo`: uses `infoCode` to show localized relay information.
 
 Unknown inbound event names are logged and otherwise ignored.
+
+`serverPresence` is an additive relay event for web clients. The Java plugin
+does not consume it.
 
 ## Payload Classes
 

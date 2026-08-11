@@ -36,6 +36,10 @@ public class WebSocketHandler implements de.omegazirkel.risingworld.tools.WebSoc
     public void onConnected(WSClientEndpoint wsce) {
         wsc = wsce;
         logger().info("🔌 Websocket Connected");
+        ServerRegistrationMessage registration = new ServerRegistrationMessage();
+        String shortName = Server.getOption("Server_ShortName");
+        registration.shortName = shortName == null || shortName.isBlank() ? Server.getName() : shortName.trim();
+        transmitMessageWS(new WSMessage<>("serverRegister", registration));
         plugin.dispatchServer(() -> plugin.resyncOnlinePlayersWithRelay());
     }
 

@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- feat: register the configured server short name with compatible GIRS relays
+  for channel-presence lists
+
 ## [0.15.11] - 2026-08-05 | CI maintenance
 
 - build: maintain the GitHub Actions release workflow.
