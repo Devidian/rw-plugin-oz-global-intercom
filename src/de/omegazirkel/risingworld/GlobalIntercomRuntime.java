@@ -592,7 +592,6 @@ class GlobalIntercomRuntime extends Plugin {
 
 	public void onSettingsChanged(Path file) {
 		s.initSettings(file.toString());
-		logger().setLevel(s.logLevel);
 		// reconnect websocket
 		connectRelay(true);
 		// updated settings msg to all

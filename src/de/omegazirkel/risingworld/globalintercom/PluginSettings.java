@@ -16,6 +16,7 @@ import de.omegazirkel.risingworld.GlobalIntercom;
 import de.omegazirkel.risingworld.tools.OZLogger;
 import de.omegazirkel.risingworld.tools.settings.AdminSettingsEntry;
 import de.omegazirkel.risingworld.tools.settings.AdminSettingsType;
+import de.omegazirkel.risingworld.tools.settings.JsonSettingsFile;
 import de.omegazirkel.risingworld.tools.settings.SettingsFileEditor;
 
 public class PluginSettings {
@@ -28,8 +29,6 @@ public class PluginSettings {
 	}
 
 	// Settings
-	public String logLevel = "ALL";
-	public boolean reloadOnChange = true;
 	public boolean sendPluginWelcome = false;
 	public boolean restartOnUpdate = true;
 	public boolean joinDefault = false;
@@ -64,37 +63,30 @@ public class PluginSettings {
 	}
 
 	public void initSettings() {
-		initSettings((plugin.getPath() != null ? plugin.getPath() : ".") + "/settings.properties");
+		initSettings(JsonSettingsFile.worldSettingsFile(plugin.getPath() != null ? plugin.getPath() : ".").toString());
 	}
 
 	public void initSettings(String filePath) {
 		settingsFile = Paths.get(filePath);
-		Path defaultSettingsFile = settingsFile.resolveSibling("settings.default.properties");
+		Path defaultSettingsFile = settingsFile.resolveSibling("settings.default.json");
+		Path legacySettingsFile = settingsFile.resolveSibling("settings.properties");
 
 		try {
-			if (Files.notExists(settingsFile) && Files.exists(defaultSettingsFile)) {
-				logger().info("settings.properties not found, copying from settings.default.properties...");
-				Files.copy(defaultSettingsFile, settingsFile);
-			}
+			if (JsonSettingsFile.migrateLegacyProperties(legacySettingsFile, settingsFile))
+				logger().info("Migrated legacy settings.properties to " + settingsFile.getFileName());
+			if (Files.notExists(settingsFile) && Files.exists(defaultSettingsFile))
+				JsonSettingsFile.writeFlatAtomically(settingsFile, JsonSettingsFile.loadFlat(defaultSettingsFile));
+			JsonSettingsFile.normalizePaths(settingsFile);
 
 			Properties settings = new Properties();
 			Properties defaults = new Properties();
-			if (Files.exists(defaultSettingsFile)) {
-				try (FileInputStream in = new FileInputStream(defaultSettingsFile.toFile())) {
-					defaults.load(new InputStreamReader(in, "UTF8"));
-				}
-			}
-			if (Files.exists(settingsFile)) {
-				try (FileInputStream in = new FileInputStream(settingsFile.toFile())) {
-					settings.load(new InputStreamReader(in, "UTF8"));
-				}
-			} else {
+			defaults = loadSettings(defaultSettingsFile);
+			settings = loadSettings(settingsFile);
+			if (settings.isEmpty()) {
 				logger().warn(
 						"⚠️ Neither settings.properties nor settings.default.properties found. Using default values.");
 			}
 			// fill global values
-			logLevel = settings.getProperty("logLevel", "ALL");
-			reloadOnChange = bool(settings, "reloadOnChange", true);
 			restartOnUpdate = bool(settings, "restartOnUpdate", true);
 
 			// motd settings
@@ -113,8 +105,6 @@ public class PluginSettings {
 			logger().info(plugin.getName() + " Plugin settings loaded");
 
 			logger().info("Sending welcome message on login is: " + String.valueOf(sendPluginWelcome));
-			logger().info("Loglevel is set to " + logLevel);
-			logger().setLevel(logLevel);
 			currentSettings = settings;
 			defaultSettings = defaults;
 
@@ -132,12 +122,7 @@ public class PluginSettings {
 
 	public List<AdminSettingsEntry> adminSettingsEntries() {
 		return Arrays.asList(
-				AdminSettingsEntry.group("logging", "Logging", "Logging output and verbosity."),
-				entry("logLevel", "Log level", "Controls GlobalIntercom logging verbosity.", AdminSettingsType.STRING),
-				AdminSettingsEntry.group("runtime", "Runtime", "Runtime reload and maintenance behavior."),
-				entry("reloadOnChange", "Reload on change",
-						"Documents that GlobalIntercom settings reload when settings.properties changes.",
-						AdminSettingsType.BOOLEAN),
+				AdminSettingsEntry.group("runtime", "Runtime", "Maintenance behavior."),
 				entry("restartOnUpdate", "Restart on update",
 						"Documents that GlobalIntercom should restart after plugin updates.",
 						AdminSettingsType.BOOLEAN),
@@ -178,12 +163,25 @@ public class PluginSettings {
 				defaultSettings.getProperty(key, ""),
 				type,
 				false,
-				newValue -> SettingsFileEditor.writeValue(settingsPath(), key, newValue));
+				newValue -> SettingsFileEditor.writeValue(settingsPath(), JsonSettingsFile.canonicalPath(key), newValue));
 	}
 
 	private Path settingsPath() {
 		return settingsFile != null ? settingsFile
-				: Paths.get((plugin.getPath() != null ? plugin.getPath() : ".") + "/settings.properties");
+				: JsonSettingsFile.worldSettingsFile(plugin.getPath() != null ? plugin.getPath() : ".");
+	}
+
+	private Properties loadSettings(Path file) throws IOException {
+		if (!file.getFileName().toString().endsWith(".properties")) {
+			Properties properties = JsonSettingsFile.loadProperties(file);
+			JsonSettingsFile.addCompatibilityAliases(properties);
+			return properties;
+		}
+		Properties properties = new Properties();
+		if (Files.exists(file)) try (FileInputStream input = new FileInputStream(file.toFile())) {
+			properties.load(new InputStreamReader(input, "UTF8"));
+		}
+		return properties;
 	}
 
 	private boolean bool(Properties settings, String key, boolean fallback) {

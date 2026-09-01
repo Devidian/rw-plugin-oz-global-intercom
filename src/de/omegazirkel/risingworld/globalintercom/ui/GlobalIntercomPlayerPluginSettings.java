@@ -30,7 +30,7 @@ public class GlobalIntercomPlayerPluginSettings extends PlayerPluginSettings {
 
             protected OZUIElement shortcutSetting(Player uiPlayer) {
                 OZUIElement element = defaultSettingsContainer();
-                element.addChild(defaultSettingsLabel(t().get("TC_LABEL_GLOBAL_INTERCOM_SHORTCUT", uiPlayer)));
+                element.addChild(defaultSettingsLabel(t().get("tc.label.global.intercom.shortcut", uiPlayer)));
                 boolean visible = shortcutVisible(uiPlayer);
                 element.addChild(switchButtons(uiPlayer, visible, event -> {
                     if (GlobalIntercom.playerSettings != null) {

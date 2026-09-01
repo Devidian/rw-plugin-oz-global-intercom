@@ -1,0 +1,188 @@
+{
+  "cmd": {
+    "help": "Ispol\u0027zovanie plagina\nPrisoedinit\u0027sya k kanalu: PH_CMD_JOIN\nPokinut\u0027 kanal: PH_CMD_LEAVE\nSozdat\u0027 kanal: PH_CMD_CREATE\nZakryt\u0027 kanal: PH_CMD_CLOSE\nNapishite \u003cHelloWorld\u003e v kanale po umolchaniu: PH_CMD_CHAT_DEFAULT\nNapishite \u003cHelloWorld\u003e v drugoi kanal: PH_CMD_CHAT_OTHER\nSmenit\u0027 kanal po umolchaniu na lokal\u0027nyi: PH_CMD_CHAT_LOCAL\nIzmenit\u0027 pereopredelenie chata: PH_CMD_OVERRIDE\nIzmenit\u0027 bazu dannyh sohraneniya: PH_CMD_SAVE\nPokazat\u0027 (etu) spravku: PH_CMD_HELP\nShow Plugin description: PH_CMD_INFO\nPokazat\u0027 status plagina: PH_CMD_STATUS\n",
+    "info": "Plugin description\nsoon...\n",
+    "status": "Status Plagina\nVersiya plagina: PH_VERSION\nUstanovlennyye yazyki: PH_LANG_AVAILABLE\nVash yazyk: PH_LANGUAGE\nIspol\u0027zuemyi yazyk: PH_USEDLANG\nPerevedeno: Galochka(ru)\nWebSocket: PH_STATE_WS\nTekuchiy kanal po umolchaniu: PH_STATE_CH\nSohranit\u0027 nastroiki servera: PH_STATE_SAVE\nStatus pereopredeleniya chata: PH_STATE_OR\nPrisoedinilis\u0027 k kanalu: PH_CHLIST\n"
+  },
+  "msg": {
+    "cmd": {
+      "err": {
+        "arguments": "Nedopustimyi vyzov PH_CMD\nUsage: PH_COMMAND_HELP",
+        "unknown": {
+          "option": "Neizvestnaya opciya PH_OPTION"
+        }
+      },
+      "override": {
+        "notset": "Dlya pereopredeleniya chata nujno ispolzovat\u0027 bol\u0027she argumentov: PH_CMD",
+        "state": "Pereopredelit\u0027 chat PH_STATE"
+      }
+    },
+    "err": {
+      "ch": {
+        "length": "Dlina imeni kanala doljna byt\u0027 3-20 simvolov (PH_CHANNEL)",
+        "nomember": "Vy ne nahodites\u0027 v etom kanale (PH_CHANNEL)"
+      }
+    },
+    "info": {
+      "ch": {
+        "default": {
+          "reset": "Vash chat teper\u0027 nastroen na chat lokal\u0027nogo servera"
+        },
+        "join": "Dlya prisoedineniya PH_CMD_JOIN"
+      }
+    },
+    "join": "Vy prisoedinilis\u0027 k PH_CHANNEL",
+    "leave": "Vy pokinuli PH_CHANNEL",
+    "plugin": {
+      "updated": "(todo:translate) This plugin has been updated. ",
+      "welcome": "ℹ️ \u003ccolor\u003d#F00000\u003ePH_PLUGIN_NAME\u003c/color\u003e | \u003ccolor\u003d#F0F000\u003evPH_PLUGIN_VERSION\u003c/color\u003e | \u003ccolor\u003d#C0C0C0\u003e/PH_PLUGIN_CMD\u003c/color\u003e | loaded!"
+    },
+    "screen": {
+      "notallowed": "Sorry +screen was deactivated on this server"
+    },
+    "settings": {
+      "updated": "(todo:translate) Plugin settings have been updated."
+    },
+    "ws": {
+      "offline": "WebSocket ne podkluchen, ne vozmojno otpravit\u0027 soobchenie."
+    }
+  },
+  "ph": {
+    "channel": "neizvesten\nDlya sozdaniya tipa PH_CMD"
+  },
+  "relay": {
+    "channel": {
+      "notmember": "Vy ne yavlyaetes\u0027 uchastnikom PH_CHANNEL\nDlya prisoedineniya PH_CMD",
+      "unknown": "Kanal"
+    },
+    "ch": {
+      "closed": "Kanal PH_CHANNEL byl zakryt ego vladel\u0027cem, vy avtomaticheski pokinuli kanal",
+      "close": {
+        "notexists": "Kanal,kotoryi vy hotite zakryt\u0027, ne suchestvuet (PH_CHANNEL)",
+        "notowner": "Vy ne mojete zakryt\u0027 kanal, kotoryi vy ne sozdavali (PH_CHANNEL)",
+        "success": "Vy zakryli i pokinuli kanal PH_CHANNEL"
+      }
+    },
+    "create": {
+      "exists": "Kanal PH_CHANNEL eje suchestvuet, poprobuite prisoedinit\u0027sya k PH_CMD",
+      "length": "Dlina nazvaniya vashego kanala doljna byt\u0027 ot 3 do 20 vkluchitel\u0027no...",
+      "noglobal": "Vy ne mojete sozdavat\u0027, kanaly nachinauchiesya s global\u0027nogo (PH_CHANNEL)",
+      "notregistered": "Vy mozhete sozdavat\u0027 svoi sobstvennyye kanaly tol\u0027ko pri sohranenii nastroyek na servere.",
+      "success": "Vash kanal PH_CHANNEL byl uspeshno sozdan (vy prisoedinilis\u0027 avtomaticheski)"
+    },
+    "info": {
+      "registered": "Vashe sostoyanie cohranebiya uje aktivno",
+      "unregistered": "Vashe sohraneniya uje deaktivirovano"
+    },
+    "join": {
+      "noaccess": "U vas net dostupa k PH_CHANNEL, prover\u0027te svoi parol\u0027!",
+      "success": "Vy uspeshno prisoedinilis\u0027 k kanalu PH_CHANNEL"
+    },
+    "leave": {
+      "owner": "Vy yavlyaetes\u0027 vladel\u0027cem PH_CHANNEL, vmesto etogo vy doljny ispol\u0027zovat\u0027 PH_CMD, chtob ui\u0027ti",
+      "success": "Vy uspeshno pokinuli kanal PH_CHANNEL"
+    },
+    "success": {
+      "register": "Vashi dannye teper\u0027 budut hranit\u0027sya v baza dannyh.Teper\u0027 vy mojete sozdavat\u0027 svoi kanaly",
+      "unregister": "Vashi dannye bol\u0027she ne budut hranit\u0027sya v baze dannyh"
+    },
+    "unregister": {
+      "chowner": "Dlya sohraneniya vy ne mojete ustanovit\u0027 znachenie false,poka vy ne yavlyaetes\u0027 vladel\u0027cem"
+    },
+    "wip": "Eta funkciya vse\" eche\" v stadii razrabotki,i poka ne mojet byt\u0027 ispol\u0027zovana"
+  },
+  "state": {
+    "active": "Aktivnyi",
+    "connected": "Podkluche\"n",
+    "disconnected": "Ne podkluche\"n",
+    "inactive": "Neaktivnyi"
+  },
+  "State_Off": "vykl",
+  "State_on": "vkl",
+  "tc": {
+    "global": {
+      "intercom": {
+        "info": {
+          "panel": {
+            "info": "\u003cb\u003ePH_PLUGIN_NAME\u003c/b\u003e\nVersion: PH_VERSION\nCommand: \u003ccolor\u003dyellow\u003e/PH_PLUGIN_CMD\u003c/color\u003e\n\nCross-server and multi-channel chat relay for Rising World.\n\nPlayers can join, leave, create, close, save, and override relay channels while normal local chat remains available.",
+            "status": "\u003cb\u003eRelay status\u003c/b\u003e\nWebSocket: PH_STATE_WS\nDefault channel: PH_DEFAULT_CHANNEL\nLast channel: PH_LAST_CHANNEL\nSaved on relay: PH_SAVE_STATUS\nChat override: PH_OVERRIDE_STATUS\nJoined channels: PH_CHANNEL_LIST\n\n\u003cb\u003eSettings\u003c/b\u003e\nScreenshots: PH_SCREENSHOTS\nMax screenshot width: PH_MAX_SCREEN_WIDTH\n\n\u003cb\u003eLanguage\u003c/b\u003e\nYour language: PH_LANGUAGE\nUsed language: PH_USEDLANG\nAvailable languages: PH_LANG_AVAILABLE"
+          }
+        }
+      }
+    },
+    "setting": {
+      "allowscreenshots": {
+        "desc": "Разрешает публикацию скриншотов командами чата.",
+        "label": "Разрешить скриншоты"
+      },
+      "chatcolors": {
+        "desc": "Цвета RichText для вывода чата.",
+        "label": "Цвета чата"
+      },
+      "colorlocal": {
+        "desc": "Цвет, применяемый к локальным сообщениям чата.",
+        "label": "Цвет локального чата"
+      },
+      "colorother": {
+        "desc": "Цвет сообщений от других игроков.",
+        "label": "Цвет других игроков"
+      },
+      "colorself": {
+        "desc": "Цвет сообщений принимающего игрока.",
+        "label": "Цвет своих сообщений"
+      },
+      "defaultchannel": {
+        "desc": "Канал GlobalIntercom по умолчанию.",
+        "label": "Канал по умолчанию"
+      },
+      "joindefault": {
+        "desc": "Автоматически подключает игроков к каналу по умолчанию.",
+        "label": "Входить в канал по умолчанию"
+      },
+      "logging": {
+        "desc": "Вывод журнала и уровень детализации.",
+        "label": "Журналирование"
+      },
+      "loglevel": {
+        "desc": "Управляет детализацией журнала GlobalIntercom.",
+        "label": "Уровень журнала"
+      },
+      "maxscreenwidth": {
+        "desc": "Максимальная ширина скриншота в пикселях.",
+        "label": "Максимальная ширина скриншота"
+      },
+      "playermessages": {
+        "desc": "Сообщения, отправляемые игрокам напрямую.",
+        "label": "Сообщения игрокам"
+      },
+      "relay": {
+        "desc": "Подключение WebSocket-ретрансляции и поведение канала по умолчанию.",
+        "label": "Ретрансляция"
+      },
+      "reloadonchange": {
+        "desc": "Указывает, что настройки GlobalIntercom перезагружаются при изменении settings.properties.",
+        "label": "Перезагружать при изменении"
+      },
+      "restartonupdate": {
+        "desc": "Указывает, что GlobalIntercom должен перезапускаться после обновлений плагина.",
+        "label": "Перезапуск после обновления"
+      },
+      "runtime": {
+        "desc": "Поведение перезагрузки и обслуживания во время выполнения.",
+        "label": "Выполнение"
+      },
+      "screenshots": {
+        "desc": "Параметры вложений скриншотов для ретранслируемого чата.",
+        "label": "Скриншоты"
+      },
+      "sendpluginwelcome": {
+        "desc": "Показывает короткое сообщение GlobalIntercom, когда игрок заходит на сервер.",
+        "label": "Приветственное сообщение"
+      },
+      "websocketuri": {
+        "desc": "WebSocket-точка подключения сервера ретрансляции.",
+        "label": "URI WebSocket"
+      }
+    }
+  }
+}

@@ -1,0 +1,203 @@
+{
+  "bc": {
+    "player": {
+      "remain": "PH_PLAYERS Spieler verbleibend. Server wartet mit dem herunterfahren bis der letzte Spieler den Server verlassen hat!"
+    },
+    "update": {
+      "flag": "Neustart wegen Dateiänderungen angefordert (Plugin Aktualisierung). Server wartet mit dem herunterfahren bis der letzte Spieler den Server verlassen hat!"
+    }
+  },
+  "cmd": {
+    "help": "Plugin Verwendung\nKanal beitreten: PH_CMD_JOIN\nKanal verlassen: PH_CMD_LEAVE\nKanal erstellen: PH_CMD_CREATE\nKanal schließen: PH_CMD_CLOSE\nSchreibe \u003cHelloWorld\u003e in den Server-Standardkanal: PH_CMD_CHAT_DEFAULT\nSchreibe \u003cHelloWorld\u003e ein einen anderen Kanal: PH_CMD_CHAT_OTHER\nSetze deinen Standardkanal auf local zurück: PH_CMD_CHAT_LOCAL\nKanalüberschreibung ändern: PH_CMD_OVERRIDE\nEinstellungen speichern: PH_CMD_SAVE\nDiese Hilfe: PH_CMD_HELP\nPlugin Beschreibung: PH_CMD_INFO\nAktueller Plugin Status: PH_CMD_STATUS\n",
+    "info": "Plugin Beschreibung\nfolgt...\n",
+    "status": "Plugin Status\nPlugin version: PH_VERSION\nInstallierte Sprachen: PH_LANG_AVAILABLE\nDeine Sprache: PH_LANGUAGE\nVerwendete Sprache: PH_USEDLANG\nWebSocket: PH_STATE_WS\nAktueller Standardkanal: PH_STATE_CH\nEinstellungen speichern: PH_STATE_SAVE\nKanalüberschreibung: PH_STATE_OR\nBeigetretene Kanäle: PH_CHLIST\n"
+  },
+  "msg": {
+    "cmd": {
+      "err": {
+        "arguments": "Falscher Befehlsaufruf PH_CMD\nVerwendung: PH_COMMAND_HELP",
+        "unknown": {
+          "option": "Unbekannte Option PH_OPTION"
+        }
+      },
+      "override": {
+        "notset": "Kanalüberschreibung benötigt weiteren Parameter: PH_CMD",
+        "state": "Kanalüberschreibung ist nun PH_STATE"
+      }
+    },
+    "err": {
+      "ch": {
+        "length": "Kanalname muss 3-20 Zeichen lang sein (PH_CHANNEL)",
+        "nomember": "Du bist nicht in diesem Kanal (PH_CHANNEL)"
+      }
+    },
+    "info": {
+      "ch": {
+        "default": {
+          "reset": "Dein Standardkanal ist jetzt der lokale Server"
+        },
+        "join": "Zum beitreten verwende PH_CMD_JOIN"
+      }
+    },
+    "join": "Du bist dem Kanal PH_CHANNEL beigetreten!",
+    "leave": "Du hast den Kanal PH_CHANNEL verlassen!",
+    "plugin": {
+      "updated": "Dieses Plugin wurde aktualisiert.",
+      "welcome": "ℹ️ \u003ccolor\u003d#F00000\u003ePH_PLUGIN_NAME\u003c/color\u003e | \u003ccolor\u003d#F0F000\u003evPH_PLUGIN_VERSION\u003c/color\u003e | \u003ccolor\u003d#C0C0C0\u003e/PH_PLUGIN_CMD\u003c/color\u003e | geladen!"
+    },
+    "screen": {
+      "notallowed": "Die +screen Funktion wurde auf diesem server leider deaktiviert"
+    },
+    "settings": {
+      "updated": "Einstellungen wurden aktualisiert."
+    },
+    "ws": {
+      "offline": "WebSocket nicht verbunden! Nachricht kann nicht gesendet werden."
+    }
+  },
+  "relay": {
+    "channel": {
+      "notmember": "Du bist dem Kanal PH_CHANNEL noch nicht beigetreten\nZum beitreten tippe PH_CMD",
+      "unknown": "Der Kanal PH_CHANNEL ist unbekannt\nUm ihn selber zu erstellen tippe PH_CMD"
+    },
+    "ch": {
+      "closed": "Der Kanal PH_CHANNEL wurde von seinem Besitzer geschlossen und du wurdest automatisch entfernt",
+      "close": {
+        "notexists": "Der Kanal den du schließen möchtest existiert nicht (PH_CHANNEL)",
+        "notowner": "Du kannst keinen Kanal schliessen den du nicht erstellt hast (PH_CHANNEL)",
+        "success": "Du hast den Kanal PH_CHANNEL geschlossen und verlassen"
+      }
+    },
+    "create": {
+      "exists": "Der Kanal PH_CHANNEL existiert bereits, versuche mit PH_CMD beizutreten",
+      "length": "Die Länge des Kanalnamen muss zwischen 3 und 20 Zeichen liegen",
+      "noglobal": "Es ist nicht gestattet Kanäle mit global beginnend zu erstellen (PH_CHANNEL)",
+      "notregistered": "Du kannst erst eigene Kanäle anlegen wenn du deine Einstellungen auf dem Server speicherst",
+      "success": "Dein Kanal PH_CHANNEL wurde erfolgreich angelegt (du bist automatisch beigetreten)"
+    },
+    "info": {
+      "registered": "Deine Einstellungen werden bereits gespeichert",
+      "unregistered": "Deine Einstellungen werden bereits nicht gespeichert"
+    },
+    "join": {
+      "noaccess": "Du hast keinen Zugriff auf den Kanal PH_CHANNEL, prüfe dein Kanal-Passwort!",
+      "success": "Du bist erfolgreich dem Kanal PH_CHANNEL beigetreten"
+    },
+    "leave": {
+      "owner": "Du bist der Besitzer des Kanals PH_CHANNEL du kannst den Kanal nur mit PH_CMD verlassen",
+      "success": "Du hast den Kanal PH_CHANNEL verlassen"
+    },
+    "success": {
+      "register": "Deine Einstellungen werden nun gespeichert. Du kannst nun eigene Chat-Kanäle erstellen.",
+      "unregister": "Deine Einstellungen werden nun nicht mehr in die Datenbank gespeichert"
+    },
+    "unregister": {
+      "chowner": "Du kannst das speichern deiner Einstellungen nicht deaktivieren, solange ein von dir erstellter Kanal existiert"
+    },
+    "wip": "Diese Funktion ist noch in Arbeit und kann noch nicht verwendet werden!"
+  },
+  "state": {
+    "active": "aktiv",
+    "connected": "verbunden",
+    "disconnected": "nicht verbunden",
+    "inactive": "inaktiv",
+    "off": "aus",
+    "on": "an"
+  },
+  "tc": {
+    "global": {
+      "intercom": {
+        "info": {
+          "panel": {
+            "info": "\u003cb\u003ePH_PLUGIN_NAME\u003c/b\u003e\nVersion: PH_VERSION\nCommand: \u003ccolor\u003dyellow\u003e/PH_PLUGIN_CMD\u003c/color\u003e\n\nCross-server and multi-channel chat relay for Rising World.\n\nPlayers can join, leave, create, close, save, and override relay channels while normal local chat remains available.",
+            "status": "\u003cb\u003eRelay status\u003c/b\u003e\nWebSocket: PH_STATE_WS\nDefault channel: PH_DEFAULT_CHANNEL\nLast channel: PH_LAST_CHANNEL\nSaved on relay: PH_SAVE_STATUS\nChat override: PH_OVERRIDE_STATUS\nJoined channels: PH_CHANNEL_LIST\n\n\u003cb\u003eSettings\u003c/b\u003e\nScreenshots: PH_SCREENSHOTS\nMax screenshot width: PH_MAX_SCREEN_WIDTH\n\n\u003cb\u003eLanguage\u003c/b\u003e\nYour language: PH_LANGUAGE\nUsed language: PH_USEDLANG\nAvailable languages: PH_LANG_AVAILABLE"
+          }
+        }
+      }
+    },
+    "label": {
+      "global": {
+        "intercom": {
+          "shortcut": "Global-Intercom-Shortcut in /ozt und Inventar anzeigen"
+        }
+      }
+    },
+    "settings": {
+      "empty": "Global Intercom hat aktuell keine persönlichen Spieler-Einstellungen. Kanal-Einstellungen werden über die Global-Intercom-Befehle verwaltet."
+    },
+    "setting": {
+      "allowscreenshots": {
+        "desc": "Erlaubt das Posten von Screenshots über Chatbefehle.",
+        "label": "Screenshots erlauben"
+      },
+      "chatcolors": {
+        "desc": "RichText-Farben für die Chatausgabe.",
+        "label": "Chatfarben"
+      },
+      "colorlocal": {
+        "desc": "Farbe für lokale Chatnachrichten.",
+        "label": "Lokale Chatfarbe"
+      },
+      "colorother": {
+        "desc": "Farbe für Nachrichten anderer Spieler.",
+        "label": "Farbe anderer Spieler"
+      },
+      "colorself": {
+        "desc": "Farbe für Nachrichten des empfangenden Spielers.",
+        "label": "Farbe eigener Nachrichten"
+      },
+      "defaultchannel": {
+        "desc": "Standardkanal für Global Intercom.",
+        "label": "Standardkanal"
+      },
+      "joindefault": {
+        "desc": "Lässt Spieler automatisch dem Standardkanal beitreten.",
+        "label": "Standardkanal beitreten"
+      },
+      "logging": {
+        "desc": "Protokollausgabe und Detailgrad.",
+        "label": "Protokollierung"
+      },
+      "loglevel": {
+        "desc": "Steuert den Detailgrad der GlobalIntercom-Protokollierung.",
+        "label": "Log-Level"
+      },
+      "maxscreenwidth": {
+        "desc": "Maximale Screenshot-Breite in Pixeln.",
+        "label": "Maximale Screenshot-Breite"
+      },
+      "playermessages": {
+        "desc": "Nachrichten, die direkt an Spieler gesendet werden.",
+        "label": "Spielernachrichten"
+      },
+      "relay": {
+        "desc": "WebSocket-Relay-Verbindung und Standardkanalverhalten.",
+        "label": "Weiterleitung"
+      },
+      "reloadonchange": {
+        "desc": "Dokumentiert, dass GlobalIntercom-Einstellungen neu geladen werden, wenn sich settings.properties ändert.",
+        "label": "Bei Änderung neu laden"
+      },
+      "restartonupdate": {
+        "desc": "Dokumentiert, dass GlobalIntercom nach Plugin-Updates neu starten soll.",
+        "label": "Neustart nach Update"
+      },
+      "runtime": {
+        "desc": "Reload- und Wartungsverhalten zur Laufzeit.",
+        "label": "Laufzeit"
+      },
+      "screenshots": {
+        "desc": "Anhangsoptionen für Bildschirmfotos im weitergeleiteten Chat.",
+        "label": "Bildschirmfotos"
+      },
+      "sendpluginwelcome": {
+        "desc": "Zeigt eine kurze GlobalIntercom-Nachricht, wenn ein Spieler beitritt.",
+        "label": "Willkommensnachricht"
+      },
+      "websocketuri": {
+        "desc": "WebSocket-Endpunkt des Relay-Servers.",
+        "label": "WebSocket-URI"
+      }
+    }
+  }
+}

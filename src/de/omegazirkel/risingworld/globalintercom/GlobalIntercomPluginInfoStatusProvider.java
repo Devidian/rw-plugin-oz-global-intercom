@@ -26,7 +26,7 @@ public class GlobalIntercomPluginInfoStatusProvider implements PluginInfoStatusP
 
 	@Override
 	public String getInfo(Player player) {
-		return t().get("TC_GLOBAL_INTERCOM_INFO_PANEL_INFO", player)
+		return t().get("tc.global.intercom.info.panel.info", player)
 				.replace("PH_PLUGIN_NAME", pluginName)
 				.replace("PH_VERSION", pluginVersion)
 				.replace("PH_PLUGIN_CMD", plugin.getCommandName());
@@ -38,7 +38,7 @@ public class GlobalIntercomPluginInfoStatusProvider implements PluginInfoStatusP
 		GlobalIntercomPlayer giPlayer = plugin.getIntercomPlayer(player);
 		String lang = de.omegazirkel.risingworld.OZTools.getPlayerLanguage(player);
 
-		return t().get("TC_GLOBAL_INTERCOM_INFO_PANEL_STATUS", player)
+		return t().get("tc.global.intercom.info.panel.status", player)
 				.replace("PH_STATE_WS", state(GlobalIntercom.isRelayConnected(), "STATE_CONNECTED",
 						"STATE_DISCONNECTED", lang))
 				.replace("PH_DEFAULT_CHANNEL", settings == null ? "" : settings.defaultChannel)

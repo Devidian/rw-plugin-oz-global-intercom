@@ -19,5 +19,5 @@ the new frame restores the previous relay-only behavior without persistence work
 
 ## Validation
 
-- [ ] Add the optional short-name setting and send registration after connect.
-- [ ] Build and deploy the affected plugin to Development.
+- [x] Add the optional short-name setting and send registration after connect.
+- [x] Build and deploy the affected plugin to Development.

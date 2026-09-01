@@ -1,0 +1,18 @@
+{
+  "general": {
+    "logLevel": "ALL",
+    "reloadOnChange": true,
+    "restartOnUpdate": true,
+    "sendPluginWelcome": false,
+    "allowScreenshots": true,
+    "maxScreenWidth": 1280,
+    "joinDefault": false,
+    "defaultChannel": "global",
+    "webSocketURI": "wss://rwgi.omega-zirkel.de/ws"
+  },
+  "color": {
+    "other": "<color=#3881f7>",
+    "self": "<color=#37f7da>",
+    "local": "<color=#FFFFFF>"
+  }
+}
