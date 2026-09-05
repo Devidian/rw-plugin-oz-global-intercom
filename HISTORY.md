@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.16.2] - 2026-09-05 | Translation fixes
+
+- fix: resolve chat, welcome, channel and status messages using the JSON translation keys.
+- fix: map legacy relay response codes to JSON translation keys without changing the relay protocol.
+- fix: add missing reconnect and initialization messages in all four languages and correct Russian on/off keys.
+- test: cover message translation keys and locale-independent relay code mapping.
+
 ## [0.16.1] - 2026-09-05 | PluginAPI compatibility
 
 - build: update the bundled PluginAPI and JSON settings baseline for the native web release wave.
