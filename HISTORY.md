@@ -3,6 +3,7 @@
 ## [0.16.1] - 2026-09-05 | PluginAPI compatibility
 
 - build: update the bundled PluginAPI and JSON settings baseline for the native web release wave.
+- change: migrate Global Intercom settings and translations to JSON while retaining existing relay configuration.
 
 ## [0.16.0] - 2026-08-11 | Relay server presence
 
