@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.16.1] - 2026-09-05 | PluginAPI compatibility
+
+- build: update the bundled PluginAPI and JSON settings baseline for the native web release wave.
+
 ## [0.16.0] - 2026-08-11 | Relay server presence
 
 - feat: register the configured server short name with compatible GIRS relays
