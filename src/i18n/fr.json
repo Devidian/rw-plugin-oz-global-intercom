@@ -5,6 +5,7 @@
     "status": "Etat du plugin\nVersion du plugin: PH_VERSION\nLangues installées: PH_LANG_AVAILABLE\nVotre langue: PH_LANGUAGE\nLangue utilisée: PH_USEDLANG\nTraduit par: Google(fr)\nWebSocket: PH_STATE_WS\nCanal par défaut actuel: PH_STATE_CH\nEnregistrer les paramètres sur le backend: PH_STATE_SAVE\nStatut de substitution de conversation: PH_STATE_OR\nCanaux joints: PH_CHLIST\n"
   },
   "msg": {
+    "reconnect": "Reconnexion à PH_URI.",
     "cmd": {
       "err": {
         "arguments": "Appel non valide de PH_CMD \nUsage: PH_COMMAND_HELP",
@@ -18,6 +19,9 @@
       }
     },
     "err": {
+      "gi": {
+        "init": "Global Intercom n’est pas encore initialisé. Veuillez réessayer dans un instant."
+      },
       "ch": {
         "length": "la longueur du canal doit comporter 3 à 20 caractères (PH_CHANNEL)",
         "nomember": "vous n\u0027êtes pas dans ce canal (PH_CHANNEL)"

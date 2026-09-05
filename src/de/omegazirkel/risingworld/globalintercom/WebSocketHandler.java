@@ -77,13 +77,6 @@ public class WebSocketHandler implements de.omegazirkel.risingworld.tools.WebSoc
             if (event.contentEquals("directContactMessage")) {
                 // Not yet implemented
             }
-            // else if (wsm.event.contentEquals("registerPlayer")) {
-            // player.sendTextMessage(c.okay + pluginName + ":> " + c.text +
-            // t().get("MSG_REGISTERED", lang));
-            // } else if (wsm.event.contentEquals("unregisterPlayer")) {
-            // player.sendTextMessage(c.okay + pluginName + ":> " + c.text +
-            // t().get("MSG_UNREGISTERED", lang));
-            // }
             else if (event.contentEquals("playerOnline")) {
                 if (!giPlayer.saveSettings && s.joinDefault && !giPlayer.isInChannel(s.defaultChannel)) {
                     PlayerJoinChannelMessage msg = new PlayerJoinChannelMessage(player);
@@ -98,12 +91,12 @@ public class WebSocketHandler implements de.omegazirkel.risingworld.tools.WebSoc
             } else if (event.contentEquals("playerOverrideChange")) {
                 {
                     boolean newVal = wsmsg.subject.contentEquals("true");
-                    String msg = c.okay + plugin.getName() + ":> " + c.text + t().get("MSG_CMD_OVERRIDE_STATE", lang);
+                    String msg = c.okay + plugin.getName() + ":> " + c.text + t().get("msg.cmd.override.state", lang);
 
                     if (newVal) {
-                        msg = msg.replace("PH_STATE", c.okay + t().get("STATE_ON", lang) + c.text);
+                        msg = msg.replace("PH_STATE", c.okay + t().get("state.on", lang) + c.text);
                     } else {
-                        msg = msg.replace("PH_STATE", c.error + t().get("STATE_OFF", lang) + c.text);
+                        msg = msg.replace("PH_STATE", c.error + t().get("state.off", lang) + c.text);
                     }
 
                     player.sendTextMessage(msg);
@@ -112,19 +105,19 @@ public class WebSocketHandler implements de.omegazirkel.risingworld.tools.WebSoc
                 String chName = wsmsg.subject;
                 player.sendTextMessage(
                         c.okay + plugin.getName() + ":> " + c.text
-                                + t().get("MSG_JOIN", lang).replace("PH_CHANNEL", chName));
+                                + t().get("msg.join", lang).replace("PH_CHANNEL", chName));
             } else if (event.contentEquals("playerLeaveChannel")) {
                 String chName = wsmsg.subject;
                 player.sendTextMessage(c.warning + plugin.getName() + ":> " + c.text
-                        + t().get("MSG_LEAVE", lang).replace("PH_CHANNEL", chName));
+                        + t().get("msg.leave", lang).replace("PH_CHANNEL", chName));
             } else if (event.contentEquals("playerCreateChannel")) {
                 String chName = wsmsg.subject;
                 player.sendTextMessage(
                         c.okay + plugin.getName() + ":> " + c.text
-                                + t().get("MSG_CREATE", lang).replace("PH_CHANNEL", chName));
+                                + t().get("relay.create.success", lang).replace("PH_CHANNEL", chName));
             } else if (event.contentEquals("playerResponseError")) {
                 String code = wsmsg.errorCode;
-                String baseMessage = c.error + plugin.getName() + ":> " + c.text + t().get(code, lang);
+                String baseMessage = c.error + plugin.getName() + ":> " + c.text + t().get(RelayTranslationKey.fromCode(code), lang);
                 switch (code) {
                     case "RELAY_CHANNEL_NOTMEMBER":
                         baseMessage = baseMessage.replace("PH_CHANNEL", c.warning + wsmsg.subject + c.text);
@@ -177,7 +170,7 @@ public class WebSocketHandler implements de.omegazirkel.risingworld.tools.WebSoc
                 player.sendTextMessage(baseMessage);
             } else if (event.contentEquals("playerResponseSuccess")) {
                 String code = wsmsg.successCode;
-                String baseMessage = c.okay + plugin.getName() + ":> " + c.text + t().get(code, lang);
+                String baseMessage = c.okay + plugin.getName() + ":> " + c.text + t().get(RelayTranslationKey.fromCode(code), lang);
                 switch (code) {
                     case "RELAY_SUCCESS_REGISTER":
                         // no placeholder
@@ -203,7 +196,7 @@ public class WebSocketHandler implements de.omegazirkel.risingworld.tools.WebSoc
                 player.sendTextMessage(baseMessage);
             } else if (event.contentEquals("playerResponseInfo")) {
                 String code = wsmsg.infoCode;
-                String baseMessage = c.text + plugin.getName() + ":> " + c.text + t().get(code, lang);
+                String baseMessage = c.text + plugin.getName() + ":> " + c.text + t().get(RelayTranslationKey.fromCode(code), lang);
                 // switch (code) {
 
                 // default:
@@ -240,7 +233,7 @@ public class WebSocketHandler implements de.omegazirkel.risingworld.tools.WebSoc
 
         try {
             if (!transmitMessageWS(wsmsg)) {
-                player.sendTextMessage(c.error + plugin.getName() + ":> " + c.text + t().get("MSG_WS_OFFLINE", lang));
+                player.sendTextMessage(c.error + plugin.getName() + ":> " + c.text + t().get("msg.ws.offline", lang));
             }
         } catch (Exception e) {
             player.sendTextMessage(c.error + plugin.getName() + ":>" + c.text + " " + e.getMessage());

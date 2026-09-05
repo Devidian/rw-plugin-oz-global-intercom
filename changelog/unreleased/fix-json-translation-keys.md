@@ -1,0 +1,2 @@
+- Fix untranslated chat, welcome, channel and status messages after the JSON translation migration; map legacy relay response codes to JSON keys without changing the wire protocol.
+- Add missing reconnect and initialization messages in all four languages and validate translation key coverage.

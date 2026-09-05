@@ -164,7 +164,7 @@ class GlobalIntercomRuntime extends Plugin {
 			// Invalid number of arguments (0)
 			if (cmd.length < 2) {
 				player.sendTextMessage(c.error + this.getName() + ":>" + c.text
-						+ t.get("MSG_CMD_ERR_ARGUMENTS", lang).replace("PH_CMD", c.error + command + c.text)
+						+ t.get("msg.cmd.err.arguments", lang).replace("PH_CMD", c.error + command + c.text)
 								.replace("PH_COMMAND_HELP", c.command + "/" + pluginCMD + " help\n" + c.text));
 				return;
 			}
@@ -184,7 +184,7 @@ class GlobalIntercomRuntime extends Plugin {
 						}
 					} else {
 						player.sendTextMessage(c.error + this.getName() + ":>" + c.text
-								+ t.get("MSG_CMD_ERR_ARGUMENTS", lang).replace("PH_CMD", c.error + command + c.text)
+								+ t.get("msg.cmd.err.arguments", lang).replace("PH_CMD", c.error + command + c.text)
 										.replace("PH_COMMAND_HELP",
 												c.command + "/" + pluginCMD + " save true|false\n" + c.text));
 					}
@@ -200,7 +200,7 @@ class GlobalIntercomRuntime extends Plugin {
 						wsh.transmitMessageWS(player, wsmsg);
 					} else {
 						player.sendTextMessage(c.error + this.getName() + ":>" + c.text
-								+ t.get("MSG_CMD_ERR_ARGUMENTS", lang).replace("PH_CMD", c.error + command + c.text)
+								+ t.get("msg.cmd.err.arguments", lang).replace("PH_CMD", c.error + command + c.text)
 										.replace("PH_COMMAND_HELP",
 												c.command + "/" + pluginCMD + " create channelname [password]\n"
 														+ c.text));
@@ -215,7 +215,7 @@ class GlobalIntercomRuntime extends Plugin {
 						wsh.transmitMessageWS(player, wsmsg);
 					} else {
 						player.sendTextMessage(c.error + this.getName() + ":>" + c.text
-								+ t.get("MSG_CMD_ERR_ARGUMENTS", lang).replace("PH_CMD", c.error + command + c.text)
+								+ t.get("msg.cmd.err.arguments", lang).replace("PH_CMD", c.error + command + c.text)
 										.replace("PH_COMMAND_HELP",
 												c.command + "/" + pluginCMD + " close channelname\n" + c.text));
 					}
@@ -253,7 +253,7 @@ class GlobalIntercomRuntime extends Plugin {
 					PluginInfoStatusProviders.show(player, name);
 					break;
 				case "help":
-					String helpMessage = t.get("CMD_HELP", lang)
+					String helpMessage = t.get("cmd.help", lang)
 							.replace("PH_CMD_JOIN",
 									c.command + "/" + pluginCMD + " join channelname [password]" + c.text)
 							.replace("PH_CMD_LEAVE", c.command + "/" + pluginCMD + " leave channelname" + c.text)
@@ -283,7 +283,7 @@ class GlobalIntercomRuntime extends Plugin {
 						}
 					} else {
 						String message = c.okay + this.getName() + ":> " + c.text
-								+ t.get("MSG_CMD_OVERRIDE_NOTSET", lang)
+								+ t.get("msg.cmd.override.notset", lang)
 										.replace("PH_CMD",
 												c.command + "/" + pluginCMD + " override [true|false] " + c.text);
 						player.sendTextMessage(message);
@@ -294,11 +294,11 @@ class GlobalIntercomRuntime extends Plugin {
 						break;
 					connectRelay(true);
 					player.sendTextMessage(c.okay + this.getName() + ":> " + c.text
-							+ t.get("MSG_RECONNECT", lang).replace("PH_URI", s.webSocketURI.toString()));
+							+ t.get("msg.reconnect", lang).replace("PH_URI", s.webSocketURI.toString()));
 					break;
 				default:
 					player.sendTextMessage(c.error + this.getName() + ":> " + c.text
-							+ t.get("MSG_CMD_ERR_UNKNOWN_OPTION", lang).replace("PH_OPTION", option));
+							+ t.get("msg.cmd.err.unknown.option", lang).replace("PH_OPTION", option));
 					break;
 			}
 		}
@@ -336,7 +336,7 @@ class GlobalIntercomRuntime extends Plugin {
 		GlobalIntercomPlayer giPlayer = playerMap.get(player.getUID() + "");
 		if (giPlayer == null) {
 			if (noColorText.startsWith("#")) {
-				player.sendTextMessage(c.error + this.getName() + ":> " + c.text + t.get("MSG_ERR_GI_INIT", lang));
+				player.sendTextMessage(c.error + this.getName() + ":> " + c.text + t.get("msg.err.gi.init", lang));
 				event.setCancelled(true);
 			}
 			return;
@@ -352,7 +352,7 @@ class GlobalIntercomRuntime extends Plugin {
 				event.setChatMessage(s.colorLocal + noColorText.substring(2));
 			} else {
 				player.sendTextMessage(
-						c.okay + this.getName() + ":>" + c.text + t.get("MSG_INFO_CH_DEFAULT_RESET", lang));
+						c.okay + this.getName() + ":>" + c.text + t.get("msg.info.ch.default.reset", lang));
 				event.setCancelled(true); // No text, don't proceed
 			}
 			return;
@@ -372,18 +372,18 @@ class GlobalIntercomRuntime extends Plugin {
 			}
 			if (channel.length() > 20) {
 				player.sendTextMessage(c.error + this.getName() + ":> " + c.text
-						+ t.get("MSG_ERR_CH_LENGTH", lang).replace("PH_CHANNEL", channel));
+						+ t.get("msg.err.ch.length", lang).replace("PH_CHANNEL", channel));
 				event.setCancelled(true); // do not post to local chat
 				return;
 			} else if (channel.length() < 3) {
 				player.sendTextMessage(c.error + this.getName() + ":>" + c.text
-						+ t.get("MSG_ERR_CH_LENGTH", lang).replace("PH_CHANNEL", channel));
+						+ t.get("msg.err.ch.length", lang).replace("PH_CHANNEL", channel));
 				event.setCancelled(true); // do not post to local chat
 				return;
 			} else if (giPlayer == null || !giPlayer.isInChannel(channel)) {
 				player.sendTextMessage(c.error + this.getName() + ":>" + c.text
-						+ t.get("MSG_ERR_CH_NOMEMBER", lang).replace("PH_CHANNEL", channel) + "\n"
-						+ t.get("MSG_INFO_CH_JOIN", lang).replace("PH_CMD_JOIN",
+						+ t.get("msg.err.ch.nomember", lang).replace("PH_CHANNEL", channel) + "\n"
+						+ t.get("msg.info.ch.join", lang).replace("PH_CMD_JOIN",
 								c.command + "/" + pluginCMD + " join " + channel + c.text));
 				event.setCancelled(true); // do not post to local chat
 				return;
@@ -435,7 +435,7 @@ class GlobalIntercomRuntime extends Plugin {
 					wsh.transmitMessageWS(wsbcm);
 				});
 			} else {
-				player.sendTextMessage(t.get("MSG_SCREEN_NOTALLOWED", lang));
+				player.sendTextMessage(t.get("msg.screen.notallowed", lang));
 				WSMessage<ChatMessage> wsbcm = new WSMessage<>("broadcastMessage", cmsg);
 				wsh.transmitMessageWS(player, wsbcm);
 			}
@@ -457,7 +457,7 @@ class GlobalIntercomRuntime extends Plugin {
 		Player player = event.getPlayer();
 		if (s.sendPluginWelcome) {
 			String lang = de.omegazirkel.risingworld.OZTools.getPlayerLanguage(player);
-			player.sendTextMessage(t.get("MSG_PLUGIN_WELCOME", lang)
+			player.sendTextMessage(t.get("msg.plugin.welcome", lang)
 					.replace("PH_PLUGIN_NAME", getDescription("name"))
 					.replace("PH_PLUGIN_CMD", pluginCMD)
 					.replace("PH_PLUGIN_VERSION", getDescription("version")));
@@ -585,7 +585,7 @@ class GlobalIntercomRuntime extends Plugin {
 			// Plugin updated msg to all
 			for (Player player : Server.getAllPlayers()) {
 				player.sendTextMessage(c.okay + this.getName() + ":> " + c.endTag
-						+ t.get("MSG_PLUGIN_UPDATED", de.omegazirkel.risingworld.OZTools.getPlayerLanguage(player)));
+						+ t.get("msg.plugin.updated", de.omegazirkel.risingworld.OZTools.getPlayerLanguage(player)));
 			}
 		}
 	}
@@ -597,7 +597,7 @@ class GlobalIntercomRuntime extends Plugin {
 		// updated settings msg to all
 		for (Player player : Server.getAllPlayers()) {
 			player.sendTextMessage(c.okay + this.getName() + ":> " + c.endTag
-					+ t.get("MSG_SETTINGS_UPDATED", de.omegazirkel.risingworld.OZTools.getPlayerLanguage(player)));
+					+ t.get("msg.settings.updated", de.omegazirkel.risingworld.OZTools.getPlayerLanguage(player)));
 		}
 	}
 

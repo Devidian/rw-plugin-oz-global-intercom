@@ -39,13 +39,13 @@ public class GlobalIntercomPluginInfoStatusProvider implements PluginInfoStatusP
 		String lang = de.omegazirkel.risingworld.OZTools.getPlayerLanguage(player);
 
 		return t().get("tc.global.intercom.info.panel.status", player)
-				.replace("PH_STATE_WS", state(GlobalIntercom.isRelayConnected(), "STATE_CONNECTED",
-						"STATE_DISCONNECTED", lang))
+				.replace("PH_STATE_WS", state(GlobalIntercom.isRelayConnected(), "state.connected",
+						"state.disconnected", lang))
 				.replace("PH_DEFAULT_CHANNEL", settings == null ? "" : settings.defaultChannel)
 				.replace("PH_LAST_CHANNEL", plugin.getPlayerLastChannel(player))
-				.replace("PH_SAVE_STATUS", state(giPlayer != null && giPlayer.saveSettings, "STATE_ACTIVE",
-						"STATE_INACTIVE", lang))
-				.replace("PH_OVERRIDE_STATUS", state(giPlayer != null && giPlayer.override, "STATE_ON", "STATE_OFF",
+				.replace("PH_SAVE_STATUS", state(giPlayer != null && giPlayer.saveSettings, "state.active",
+						"state.inactive", lang))
+				.replace("PH_OVERRIDE_STATUS", state(giPlayer != null && giPlayer.override, "state.on", "state.off",
 						lang))
 				.replace("PH_CHANNEL_LIST", giPlayer == null ? "" : giPlayer.getChannelList())
 				.replace("PH_LANGUAGE", player.getLanguage() + " / " + de.omegazirkel.risingworld.OZTools.getPlayerLanguage(player))
@@ -64,6 +64,6 @@ public class GlobalIntercomPluginInfoStatusProvider implements PluginInfoStatusP
 	}
 
 	private static String booleanText(boolean value, String lang) {
-		return t().get(value ? "STATE_ON" : "STATE_OFF", lang);
+		return t().get(value ? "state.on" : "state.off", lang);
 	}
 }

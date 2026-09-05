@@ -13,6 +13,7 @@
     "status": "Plugin Status\nPlugin version: PH_VERSION\nInstallierte Sprachen: PH_LANG_AVAILABLE\nDeine Sprache: PH_LANGUAGE\nVerwendete Sprache: PH_USEDLANG\nWebSocket: PH_STATE_WS\nAktueller Standardkanal: PH_STATE_CH\nEinstellungen speichern: PH_STATE_SAVE\nKanalüberschreibung: PH_STATE_OR\nBeigetretene Kanäle: PH_CHLIST\n"
   },
   "msg": {
+    "reconnect": "Verbindung zu PH_URI wird neu hergestellt.",
     "cmd": {
       "err": {
         "arguments": "Falscher Befehlsaufruf PH_CMD\nVerwendung: PH_COMMAND_HELP",
@@ -26,6 +27,9 @@
       }
     },
     "err": {
+      "gi": {
+        "init": "Global Intercom ist noch nicht initialisiert. Bitte versuche es gleich erneut."
+      },
       "ch": {
         "length": "Kanalname muss 3-20 Zeichen lang sein (PH_CHANNEL)",
         "nomember": "Du bist nicht in diesem Kanal (PH_CHANNEL)"

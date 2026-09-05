@@ -13,6 +13,7 @@
     "status": "Plugin Status\nPlugin version: PH_VERSION\nInstalled languages: PH_LANG_AVAILABLE\nYour language: PH_LANGUAGE\nUsed language: PH_USEDLANG\nTranslated by: Devidian\nWebSocket: PH_STATE_WS\nCurrent default channel: PH_STATE_CH\nSave settings on backend: PH_STATE_SAVE\nChat-override status: PH_STATE_OR\nChannels joined: PH_CHLIST\n"
   },
   "msg": {
+    "reconnect": "Reconnecting to PH_URI.",
     "cmd": {
       "err": {
         "arguments": "Invalid call of PH_CMD\nUsage: PH_COMMAND_HELP",
@@ -26,6 +27,9 @@
       }
     },
     "err": {
+      "gi": {
+        "init": "Global Intercom is not initialized yet. Please try again shortly."
+      },
       "ch": {
         "length": "channel length must be 3-20 characters (PH_CHANNEL)",
         "nomember": "you are not in this channel (PH_CHANNEL)"

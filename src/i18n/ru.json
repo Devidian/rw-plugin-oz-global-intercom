@@ -5,6 +5,7 @@
     "status": "Status Plagina\nVersiya plagina: PH_VERSION\nUstanovlennyye yazyki: PH_LANG_AVAILABLE\nVash yazyk: PH_LANGUAGE\nIspol\u0027zuemyi yazyk: PH_USEDLANG\nPerevedeno: Galochka(ru)\nWebSocket: PH_STATE_WS\nTekuchiy kanal po umolchaniu: PH_STATE_CH\nSohranit\u0027 nastroiki servera: PH_STATE_SAVE\nStatus pereopredeleniya chata: PH_STATE_OR\nPrisoedinilis\u0027 k kanalu: PH_CHLIST\n"
   },
   "msg": {
+    "reconnect": "Повторное подключение к PH_URI.",
     "cmd": {
       "err": {
         "arguments": "Nedopustimyi vyzov PH_CMD\nUsage: PH_COMMAND_HELP",
@@ -18,6 +19,9 @@
       }
     },
     "err": {
+      "gi": {
+        "init": "Global Intercom ещё не инициализирован. Повторите попытку чуть позже."
+      },
       "ch": {
         "length": "Dlina imeni kanala doljna byt\u0027 3-20 simvolov (PH_CHANNEL)",
         "nomember": "Vy ne nahodites\u0027 v etom kanale (PH_CHANNEL)"
@@ -95,10 +99,10 @@
     "active": "Aktivnyi",
     "connected": "Podkluche\"n",
     "disconnected": "Ne podkluche\"n",
-    "inactive": "Neaktivnyi"
+    "inactive": "Neaktivnyi",
+    "off": "vykl",
+    "on": "vkl"
   },
-  "State_Off": "vykl",
-  "State_on": "vkl",
   "tc": {
     "global": {
       "intercom": {
