@@ -206,7 +206,6 @@
 									<directory>${basedir}/src</directory>
 									<includes>
 										<include>*.json</include>
-                                        <include>*.properties</include>
 									</includes>
 								</resource>
 							</resources>
@@ -225,7 +224,6 @@
 									<directory>${basedir}/src/i18n</directory>
 									<includes>
 										<include>*.json</include>
-                                        <include>*.properties</include>
 									</includes>
 								</resource>
 							</resources>

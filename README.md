@@ -16,7 +16,7 @@ Should look like this:
         │    │    ├── OZGlobalIntercom.jar
         │    │    ├── README.de.md
         │    │    ├── README.md
-        │    │    └── settings.properties
+        │    │    └── settings.<world>.json
         │    ├── Tools
         │    │    ├── assets...
         │    │    │── lib
@@ -56,3 +56,13 @@ The current WebSocket relay contract is documented in
 [docs/relay-contract.md](docs/relay-contract.md). Modernization keeps existing
 event names, payload shapes, and relay behavior unchanged so the Java plugin can
 remain compatible while `rw-girs` relay work is prepared.
+
+## JSON-only distribution
+
+Settings defaults (`settings.default.json`) and translations (`i18n/*.json`)
+are shipped only as JSON. Legacy default and translation `.properties` files
+are no longer included. Runtime settings remain world-scoped as
+`settings.<world>.json`; migration of an existing `settings.properties` and
+its backup remains supported. Updating the package does not delete old files
+already present on the server. Use `mvn clean package` for a fresh local
+package; ZIP assembly also excludes stale legacy settings and translations.
