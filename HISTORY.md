@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.17.0] - 2026-09-23 | JSON-only settings runtime
+
+- change: use JSON-only world settings and require manual transfer of legacy Properties values.
+
 ## [0.16.2] - 2026-09-05 | Translation fixes
 
 - fix: resolve chat, welcome, channel and status messages using the JSON translation keys.
