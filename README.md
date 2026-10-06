@@ -1,5 +1,7 @@
 # Installation (prebuild)
 
+**Build baseline:** JDK 25 (`--release 25`) and the bundled Rising World PluginAPI 0.9.3.2 JAR.
+
 Download the latest zip files from [here (OZTools)](https://github.com/Devidian/rw-plugin-oz-tools/releases) and [here (Global Intercom)](https://github.com/Devidian/rw-plugin-oz-global-intercom/releases) and unpack them into your plugins folder.
 
 ## Filetree
