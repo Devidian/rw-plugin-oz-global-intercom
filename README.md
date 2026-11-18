@@ -1,5 +1,7 @@
 # Installation (prebuild)
 
+If a player uses an intercom chat shortcut without the external-data permission, the plugin points them to `/ozt config` instead of reporting that the intercom is still initializing.
+
 **Build baseline:** JDK 25 (`--release 25`) and the bundled Rising World PluginAPI 0.9.3.2 JAR.
 
 Download the latest zip files from [here (OZTools)](https://github.com/Devidian/rw-plugin-oz-tools/releases) and [here (Global Intercom)](https://github.com/Devidian/rw-plugin-oz-global-intercom/releases) and unpack them into your plugins folder.

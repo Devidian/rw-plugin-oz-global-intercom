@@ -34,6 +34,7 @@ import de.omegazirkel.risingworld.globalintercom.entities.PlayerRegisterMessage;
 import de.omegazirkel.risingworld.globalintercom.entities.PlayerUnregisterMessage;
 import de.omegazirkel.risingworld.globalintercom.entities.WSMessage;
 import de.omegazirkel.risingworld.tools.Colors;
+import de.omegazirkel.risingworld.tools.ExternalDataConsent;
 import de.omegazirkel.risingworld.tools.I18n;
 import de.omegazirkel.risingworld.tools.OZLogger;
 import de.omegazirkel.risingworld.tools.PlayerSettings;
@@ -63,6 +64,7 @@ import net.risingworld.api.objects.Player;
  * @author Maik Laschober
  */
 class GlobalIntercomRuntime extends Plugin {
+    private de.omegazirkel.risingworld.tools.privacy.PlayerErasureService.Registration erasureRegistration;
 	static final String pluginCMD = "gi";
 
 	public static OZLogger logger() {
@@ -76,6 +78,8 @@ class GlobalIntercomRuntime extends Plugin {
 	public static Connection sqliteCon;
 	public static PlayerSettings playerSettings;
 	private ServerThreadDispatcher serverThreadDispatcher;
+	private AutoCloseable intercomConsentRegistration;
+	private AutoCloseable intercomDecisionRegistration;
 
 	static boolean flagRestart = false;
 
@@ -93,11 +97,25 @@ class GlobalIntercomRuntime extends Plugin {
 		t = I18n.getInstance(this);
 
 		s.initSettings();
+		intercomConsentRegistration = de.omegazirkel.risingworld.tools.ExternalDataConsent.registerPurpose(
+				de.omegazirkel.risingworld.tools.ExternalDataConsent.Purpose.INTERCOM,
+				() -> de.omegazirkel.risingworld.OZTools.getSettings().webUseWebsockets);
+		intercomDecisionRegistration = ExternalDataConsent.registerDecisionListener(
+				ExternalDataConsent.Purpose.INTERCOM,
+				(dbId, status) -> dispatchServer(() -> onIntercomConsentChanged(dbId, status)));
 		sqliteCon = SQLiteConnectionFactory.open(this);
 		playerSettings = new PlayerSettings(sqliteCon);
 
 			wsh = new WebSocketHandler((GlobalIntercom) this);
 		connectRelay(true);
+		erasureRegistration = de.omegazirkel.risingworld.tools.privacy.PlayerErasureService.register(
+				"intercom", ignored -> wsh.erasureReady(), request -> {
+					String uid = Server.getPlayerUID(request.playerDbId());
+					if (uid == null || uid.isBlank() || !wsh.erasePlayer(request.id(), uid)) return false;
+					playerMap.remove(uid);
+					playerSettings.erasePlayer(request.playerDbId());
+					return true;
+				});
 		AssetManager.loadIconFromPlugin(this, "oz-global-intercom");
 		PlayerPluginSettingsOverlay
 				.registerPlayerPluginSettings(new GlobalIntercomPlayerPluginSettings(getDescription("version")));
@@ -119,6 +137,11 @@ class GlobalIntercomRuntime extends Plugin {
 
 	@Override
 	public void onDisable() {
+		if (erasureRegistration != null) erasureRegistration.close();
+		try { if (intercomConsentRegistration != null) intercomConsentRegistration.close(); }
+		catch (Exception ex) { logger().warn("Intercom consent registration cleanup failed: " + ex.getMessage()); }
+		try { if (intercomDecisionRegistration != null) intercomDecisionRegistration.close(); }
+		catch (Exception ex) { logger().warn("Intercom consent listener cleanup failed: " + ex.getMessage()); }
 		if (serverThreadDispatcher != null) {
 			serverThreadDispatcher.close();
 		}
@@ -141,15 +164,35 @@ class GlobalIntercomRuntime extends Plugin {
 
 	public void onPlayerConnect(PlayerConnectEvent event) {
 		Player player = event.getPlayer();
+		if (player.isAdmin() && !de.omegazirkel.risingworld.OZTools.getSettings().webUseWebsockets) {
+			player.sendTextMessage(t.get("msg.ws.disabled", de.omegazirkel.risingworld.OZTools.getPlayerLanguage(player)));
+		}
 		sendPlayerOnlineNotification(player);
 	}
 
 	public void onPlayerDisconnect(PlayerDisconnectEvent event) {
 		Player player = event.getPlayer();
+		playerMap.remove(player.getUID() + "");
+		player.deleteAttribute("gilastch");
 		PlayerOfflineMessage msg = new PlayerOfflineMessage(player);
 		WSMessage<PlayerOfflineMessage> wsmsg = new WSMessage<>("playerOffline", msg);
 
 		wsh.transmitMessageWS(player, wsmsg);
+	}
+
+	private void onIntercomConsentChanged(int dbId, ExternalDataConsent.Status status) {
+		Player player = Server.getPlayerByDbID(dbId);
+		if (player == null) return;
+		if (status == ExternalDataConsent.Status.ACCEPTED) {
+			sendPlayerOnlineNotification(player);
+			return;
+		}
+		playerMap.remove(player.getUID() + "");
+		player.deleteAttribute("gilastch");
+		// Remove relay presence using only the UID required to find the prior connection.
+		PlayerOfflineMessage offline = new PlayerOfflineMessage(player);
+		offline.playerName = null;
+		wsh.transmitMessageWS(new WSMessage<>("playerOffline", offline));
 	}
 
 	public void onPlayerCommand(PlayerCommandEvent event) {
@@ -333,10 +376,26 @@ class GlobalIntercomRuntime extends Plugin {
 		// log.out("message: "+message,0);
 		String noColorText = message.replaceAll("</?color(?:=#?[A-Fa-f0-9]{6})?>", "");
 		// log.out("noColorText: "+noColorText,0);
+		if (!ExternalDataConsent.isGranted(player, ExternalDataConsent.Purpose.INTERCOM)) {
+			playerMap.remove(player.getUID() + "");
+			player.deleteAttribute("gilastch");
+			if (noColorText.startsWith("#%")) {
+				if (noColorText.length() > 2) event.setChatMessage(s.colorLocal + noColorText.substring(2));
+				else event.setCancelled(true);
+			} else if (noColorText.startsWith("#")) {
+				player.sendTextMessage(c.error + this.getName() + ":> " + c.text + t.get("msg.err.gi.consent", lang));
+				event.setCancelled(true);
+			}
+			return;
+		}
 		GlobalIntercomPlayer giPlayer = playerMap.get(player.getUID() + "");
 		if (giPlayer == null) {
 			if (noColorText.startsWith("#")) {
-				player.sendTextMessage(c.error + this.getName() + ":> " + c.text + t.get("msg.err.gi.init", lang));
+				boolean consented = de.omegazirkel.risingworld.tools.ExternalDataConsent.isGranted(player,
+						de.omegazirkel.risingworld.tools.ExternalDataConsent.Purpose.INTERCOM);
+				if (consented) sendPlayerOnlineNotification(player);
+				player.sendTextMessage(c.error + this.getName() + ":> " + c.text
+						+ t.get(consented ? "msg.err.gi.init" : "msg.err.gi.consent", lang));
 				event.setCancelled(true);
 			}
 			return;
@@ -432,7 +491,7 @@ class GlobalIntercomRuntime extends Plugin {
 						// e.printStackTrace();
 					}
 					WSMessage<ChatMessage> wsbcm = new WSMessage<>("broadcastMessage", cmsg);
-					wsh.transmitMessageWS(wsbcm);
+					wsh.transmitMessageWS(player, wsbcm);
 				});
 			} else {
 				player.sendTextMessage(t.get("msg.screen.notallowed", lang));
@@ -494,6 +553,7 @@ class GlobalIntercomRuntime extends Plugin {
 	public void broadcastMessage(ChatMessage cmsg) {
 
 		for (Player player : Server.getAllPlayers()) {
+			if (!ExternalDataConsent.isGranted(player, ExternalDataConsent.Purpose.INTERCOM)) continue;
 			if (!playerMap.containsKey(player.getUID() + "")) {
 				continue; // Player not initialized with GI
 			}
@@ -512,6 +572,7 @@ class GlobalIntercomRuntime extends Plugin {
 
 	public void broadcastMessage(IncomingRelayMessage.Broadcast message) {
 		for (Player player : Server.getAllPlayers()) {
+			if (!ExternalDataConsent.isGranted(player, ExternalDataConsent.Purpose.INTERCOM)) continue;
 			if (!playerMap.containsKey(player.getUID() + "")) {
 				continue;
 			}

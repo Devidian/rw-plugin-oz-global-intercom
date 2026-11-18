@@ -20,7 +20,8 @@
     },
     "err": {
       "gi": {
-        "init": "Global Intercom ещё не инициализирован. Повторите попытку чуть позже."
+        "init": "Global Intercom ещё не инициализирован. Повторите попытку чуть позже.",
+        "consent": "Для Global Intercom требуется ваше согласие на внешнюю обработку данных. Его можно дать в /ozt config."
       },
       "ch": {
         "length": "Dlina imeni kanala doljna byt\u0027 3-20 simvolov (PH_CHANNEL)",
@@ -48,6 +49,7 @@
       "updated": "(todo:translate) Plugin settings have been updated."
     },
     "ws": {
+      "disabled": "Global Intercom nedostupen: WebSocket otklyuchen v OZ Tools.",
       "offline": "WebSocket ne podkluchen, ne vozmojno otpravit\u0027 soobchenie."
     }
   },

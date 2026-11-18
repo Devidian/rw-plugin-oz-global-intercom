@@ -2,15 +2,21 @@ package de.omegazirkel.risingworld.globalintercom;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonParser;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import de.omegazirkel.risingworld.GlobalIntercom;
 import de.omegazirkel.risingworld.globalintercom.entities.GlobalIntercomPlayer;
 import de.omegazirkel.risingworld.globalintercom.entities.PlayerJoinChannelMessage;
 import de.omegazirkel.risingworld.globalintercom.entities.WSMessage;
 import de.omegazirkel.risingworld.tools.Colors;
+import de.omegazirkel.risingworld.tools.ExternalDataConsent;
 import de.omegazirkel.risingworld.tools.I18n;
 import de.omegazirkel.risingworld.tools.OZLogger;
 import de.omegazirkel.risingworld.tools.WSClientEndpoint;
+import de.omegazirkel.risingworld.tools.privacy.ErasureMessageSigner;
 import net.risingworld.api.Server;
 import net.risingworld.api.objects.Player;
 
@@ -19,6 +25,9 @@ public class WebSocketHandler implements de.omegazirkel.risingworld.tools.WebSoc
     static WSClientEndpoint wsc;
     static final Colors c = Colors.getInstance();
     static final PluginSettings s = PluginSettings.getInstance();
+    private final Map<String, Boolean> erasureRequests = new ConcurrentHashMap<>();
+    private volatile String erasureProbeId;
+    private volatile boolean relayErasureSupported;
 
     private static I18n t() {
         return I18n.getInstance(GlobalIntercom.name);
@@ -35,17 +44,35 @@ public class WebSocketHandler implements de.omegazirkel.risingworld.tools.WebSoc
     @Override
     public void onConnected(WSClientEndpoint wsce) {
         wsc = wsce;
+        relayErasureSupported = false;
         logger().info("🔌 Websocket Connected");
         ServerRegistrationMessage registration = new ServerRegistrationMessage();
         String shortName = Server.getOption("Server_ShortName");
         registration.shortName = shortName == null || shortName.isBlank() ? Server.getName() : shortName.trim();
         transmitMessageWS(new WSMessage<>("serverRegister", registration));
+        if (hasErasureCredentials()) {
+            erasureProbeId = java.util.UUID.randomUUID().toString();
+            try {
+                sendErasureMessage("erasureProbe", "intercom-erasure-probe", erasureProbeId, "_");
+            } catch (java.security.GeneralSecurityException ex) {
+                logger().warn("Could not sign Intercom erasure probe");
+            }
+        }
         plugin.dispatchServer(() -> plugin.resyncOnlinePlayersWithRelay());
     }
 
     @Override
     public void onTextMessage(String message) {
         try {
+            var envelope = JsonParser.parseString(message).getAsJsonObject();
+            if (envelope.has("event") && "playerErased".equals(envelope.get("event").getAsString())) {
+                erasureRequests.replace(envelope.getAsJsonObject("payload").get("requestId").getAsString(), true);
+                return;
+            }
+            if (envelope.has("event") && "erasureAvailable".equals(envelope.get("event").getAsString())) {
+                relayErasureSupported = envelope.getAsJsonObject("payload").get("requestId").getAsString().equals(erasureProbeId);
+                return;
+            }
             IncomingRelayMessage incoming = IncomingRelayMessage.parse(message);
             plugin.dispatchServer(() -> handleIncomingMessage(incoming));
         } catch (RuntimeException ex) {
@@ -70,6 +97,10 @@ public class WebSocketHandler implements de.omegazirkel.risingworld.tools.WebSoc
         Player player = Server.getPlayerByUID(giPlayer.id64);
         if (player == null) {
             logger().debug("Ignoring WebSocket event <" + event + "> for offline player " + giPlayer.id64);
+            return;
+        }
+        if (!ExternalDataConsent.isGranted(player, ExternalDataConsent.Purpose.INTERCOM)) {
+            GlobalIntercom.playerMap.remove(giPlayer._id);
             return;
         }
         String lang = de.omegazirkel.risingworld.OZTools.getPlayerLanguage(player);
@@ -229,6 +260,8 @@ public class WebSocketHandler implements de.omegazirkel.risingworld.tools.WebSoc
      * this Method converts a WSMessage to JSON and sends it through WS
      */
     public void transmitMessageWS(Player player, WSMessage<?> wsmsg) {
+        if (!de.omegazirkel.risingworld.tools.ExternalDataConsent.isGranted(
+                player, de.omegazirkel.risingworld.tools.ExternalDataConsent.Purpose.INTERCOM)) return;
         String lang = de.omegazirkel.risingworld.OZTools.getPlayerLanguage(player);
 
         try {
@@ -247,6 +280,36 @@ public class WebSocketHandler implements de.omegazirkel.risingworld.tools.WebSoc
         }
         Gson gson = new GsonBuilder().create();
         return wsc.send(gson.toJson(wsmsg));
+    }
+
+    private boolean hasErasureCredentials() {
+        String id = System.getenv("INTERCOM_ERASURE_SERVER_ID");
+        String key = System.getenv("INTERCOM_ERASURE_KEY");
+        return id != null && id.matches("[a-zA-Z0-9._-]{1,80}")
+                && key != null && key.matches("[a-f0-9]{64}");
+    }
+
+    public boolean erasureReady() {
+        return relayErasureSupported && wsc != null && wsc.isConnected() && hasErasureCredentials();
+    }
+
+    public boolean erasePlayer(String requestId, String uid) throws java.security.GeneralSecurityException {
+        if (erasureRequests.remove(requestId, true)) return true;
+        if (!erasureReady()) return false;
+        erasureRequests.putIfAbsent(requestId, false);
+        transmitMessageWS(new WSMessage<>("playerOffline", Map.of("playerUID", uid)));
+        sendErasureMessage("erasePlayer", "intercom-player-erasure", requestId, uid);
+        return false;
+    }
+
+    private void sendErasureMessage(String event, String domain, String requestId, String uid)
+            throws java.security.GeneralSecurityException {
+        String serverId = System.getenv("INTERCOM_ERASURE_SERVER_ID");
+        long issuedAt = System.currentTimeMillis();
+        String signature = ErasureMessageSigner.sign(System.getenv("INTERCOM_ERASURE_KEY"),
+                domain, serverId, requestId, uid, Long.toString(issuedAt));
+        transmitMessageWS(new WSMessage<>(event, Map.of("serverId", serverId, "uid", uid,
+                "requestId", requestId, "issuedAt", issuedAt, "signature", signature)));
     }
 
 }

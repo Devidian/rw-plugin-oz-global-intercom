@@ -28,7 +28,8 @@
     },
     "err": {
       "gi": {
-        "init": "Global Intercom is not initialized yet. Please try again shortly."
+        "init": "Global Intercom is not initialized yet. Please try again shortly.",
+        "consent": "Global Intercom needs your permission for external data processing. Choose under /ozt config on the External data processing tab."
       },
       "ch": {
         "length": "channel length must be 3-20 characters (PH_CHANNEL)",
@@ -56,6 +57,7 @@
       "updated": "Settings have been updated."
     },
     "ws": {
+      "disabled": "Global Intercom is unavailable because WebSockets are disabled in OZ Tools.",
       "offline": "WebSocket not connected, can not send message."
     }
   },

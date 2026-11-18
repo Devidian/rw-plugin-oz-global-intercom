@@ -28,7 +28,8 @@
     },
     "err": {
       "gi": {
-        "init": "Global Intercom ist noch nicht initialisiert. Bitte versuche es gleich erneut."
+        "init": "Global Intercom ist noch nicht initialisiert. Bitte versuche es gleich erneut.",
+        "consent": "Global Intercom benötigt deine Freigabe für externe Datenverarbeitung. Entscheide unter /ozt config im Reiter Externe Datenverarbeitung."
       },
       "ch": {
         "length": "Kanalname muss 3-20 Zeichen lang sein (PH_CHANNEL)",
@@ -56,6 +57,7 @@
       "updated": "Einstellungen wurden aktualisiert."
     },
     "ws": {
+      "disabled": "Global Intercom ist nicht verfügbar, weil WebSockets in OZ Tools deaktiviert sind.",
       "offline": "WebSocket nicht verbunden! Nachricht kann nicht gesendet werden."
     }
   },
