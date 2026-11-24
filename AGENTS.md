@@ -22,7 +22,7 @@ Does not own:
 - Keep dependencies minimal and runtime-safe.
 - Use `rw-plugin-oz-tools` for reusable infrastructure.
 - Treat WebSocket payload changes as compatibility-sensitive contracts.
-- Follow `.codex/agents.toml` for local agent roles, task classes, context loading, and escalation.
+- Follow `.codex/agents/*.toml` for local agent roles, task classes, context loading, and escalation.
 - Follow `docs/policies/repository-policy.md` for reusable governance rules.
 - Keep `README.md`, `HISTORY.md`, and `PLANS.md` aligned with behavior or structure changes.
 - Keep the `plugin.yml` entry class as the sole Rising World `Listener` and sole
