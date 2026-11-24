@@ -1,5 +1,8 @@
 # PLANS.md
 
+- [x] Give a consent-specific hint for blocked intercom shortcuts.
+- [ ] Verify the hint with a declined player on Development.
+
 Planning is stored in repository-local docs.
 
 - Active implementation tasks: [docs/active/](docs/active/)
