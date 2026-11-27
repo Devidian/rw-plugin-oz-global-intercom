@@ -5,6 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 
 import de.omegazirkel.risingworld.globalintercom.entities.ChatMessage;
@@ -16,29 +19,37 @@ public sealed interface IncomingRelayMessage permits IncomingRelayMessage.Broadc
     String event();
 
     static IncomingRelayMessage parse(String json) {
+        if (json == null || json.isBlank()) throw new IllegalArgumentException("Relay message has no event");
+        var tree = JsonParser.parseString(json);
+        if (tree.isJsonNull()) throw new IllegalArgumentException("Relay message has no event");
+        if (!tree.isJsonObject()) throw new JsonSyntaxException("Relay envelope must be an object");
+        return fromEnvelope(tree.getAsJsonObject());
+    }
+
+    static IncomingRelayMessage fromEnvelope(JsonObject envelope) {
         Gson gson = new Gson();
-        WSMessage<?> envelope = gson.fromJson(json, WSMessage.class);
-        if (envelope == null || envelope.event == null || envelope.event.isBlank()) {
+        String event = gson.fromJson(envelope.get("event"), String.class);
+        if (event == null || event.isBlank()) {
             throw new IllegalArgumentException("Relay message has no event");
         }
-        if ("broadcastMessage".equals(envelope.event)) {
+        if ("broadcastMessage".equals(event)) {
             Type type = new TypeToken<WSMessage<ChatMessage>>() {
             }.getType();
-            ChatMessage payload = gson.<WSMessage<ChatMessage>>fromJson(json, type).payload;
+            ChatMessage payload = gson.<WSMessage<ChatMessage>>fromJson(envelope, type).payload;
             if (payload == null) {
                 throw new IllegalArgumentException("Broadcast message has no payload");
             }
-            return new Broadcast(envelope.event, payload.chatContent, payload.chatChannel, payload.playerName,
+            return new Broadcast(event, payload.chatContent, payload.chatChannel, payload.playerName,
                     payload.playerUID, payload.sourceName, payload.sourceIP, payload.sourceVersion, payload.attachment);
         }
 
         Type type = new TypeToken<WSMessage<GlobalIntercomPlayer>>() {
         }.getType();
-        WSMessage<GlobalIntercomPlayer> message = gson.fromJson(json, type);
+        WSMessage<GlobalIntercomPlayer> message = gson.fromJson(envelope, type);
         if (message.payload == null) {
             throw new IllegalArgumentException("Player event has no payload");
         }
-        return new PlayerEvent(envelope.event, new PlayerSnapshot(message.payload), message.subject, message.infoCode,
+        return new PlayerEvent(event, new PlayerSnapshot(message.payload), message.subject, message.infoCode,
                 message.successCode, message.errorCode);
     }
 

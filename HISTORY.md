@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Incoming relay frames are decoded once before dispatch.
+
 - Explain missing external-data consent when a player tries a Global Intercom chat shortcut before initialization.
 
 ## [0.17.0] - 2026-09-23 | JSON-only settings runtime

@@ -73,7 +73,7 @@ public class WebSocketHandler implements de.omegazirkel.risingworld.tools.WebSoc
                 relayErasureSupported = envelope.getAsJsonObject("payload").get("requestId").getAsString().equals(erasureProbeId);
                 return;
             }
-            IncomingRelayMessage incoming = IncomingRelayMessage.parse(message);
+            IncomingRelayMessage incoming = IncomingRelayMessage.fromEnvelope(envelope);
             plugin.dispatchServer(() -> handleIncomingMessage(incoming));
         } catch (RuntimeException ex) {
             logger().warn("Invalid WebSocket message: " + ex.getMessage());

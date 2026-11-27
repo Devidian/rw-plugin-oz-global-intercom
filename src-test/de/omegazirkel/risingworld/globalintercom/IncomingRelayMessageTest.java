@@ -69,6 +69,22 @@ public class IncomingRelayMessageTest {
         assertTrue(error.getMessage().contains("event"));
     }
 
+    @Test
+    public void websocketEnvelopeAndLegacyStringDecodeIdentically() {
+        String raw = "{\"event\":\"broadcastMessage\",\"payload\":{\"chatContent\":\"hello\"}}";
+        assertEquals(IncomingRelayMessage.parse(raw),
+                IncomingRelayMessage.fromEnvelope(com.google.gson.JsonParser.parseString(raw).getAsJsonObject()));
+    }
+
+    @Test
+    public void rejectsMalformedFramesAndMissingTypedPayload() {
+        expectThrows(com.google.gson.JsonSyntaxException.class, () -> IncomingRelayMessage.parse("{]"));
+        expectThrows(com.google.gson.JsonSyntaxException.class, () -> IncomingRelayMessage.parse("[]"));
+        expectThrows(IllegalArgumentException.class, () -> IncomingRelayMessage.parse((String) null));
+        expectThrows(IllegalArgumentException.class,
+                () -> IncomingRelayMessage.parse("{\"event\":\"broadcastMessage\"}"));
+    }
+
     private static <T extends Throwable> T expectThrows(Class<T> expected, Runnable action) {
         try {
             action.run();

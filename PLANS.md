@@ -11,3 +11,7 @@ Planning is stored in repository-local docs.
 - Planning and documentation standards: [docs/policies/repository-policy.md](docs/policies/repository-policy.md)
 
 Every implementation plan must include objective, ownership, dependencies, risks, validation strategy, affected repositories/plugins, rollback considerations, and a markdown checkbox checklist.
+
+## Maintenance
+
+Incoming relay frames are decoded once before dispatch.
